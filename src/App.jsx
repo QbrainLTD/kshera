@@ -13,7 +13,7 @@ function App() {
         sx={{
           display: "flex", // Flexbox container
           flexDirection: "column", // Stack cards vertically
-          gap: 3, // Adds space between cards (3 = 24px)
+          gap: 2, // Adds space between cards (3 = 24px)
           alignItems: "center", // Center cards horizontally
           padding: 2, // Padding around the container
         }}

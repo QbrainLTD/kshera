@@ -15,7 +15,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     alignItems: "center",
     borderRadius: theme.spacing(2),
     padding: theme.spacing(5),
-    width: "95%",
+    width: "50%",
     backgroundColor: "#F7F9FC",
     boxShadow: "0 2px 4px rgba(12, 12, 12, 2.1)",
     direction: "rtl",
@@ -31,7 +31,7 @@ const ActionButton = styled(Button)(({ theme }) => ({
 
 function KosherRestaurantCard({ restaurant }) {
     return (
-        <StyledCard>
+        <StyledCard >
             <Box
                 component="img"
                 src={restaurant.imageUrl}
