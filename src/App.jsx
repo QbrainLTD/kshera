@@ -1,20 +1,22 @@
-import KosherRestaurantCard from "./KosherRestaurantCard";
 import restaurants from "./RestaurantCard"; // Import restaurant data
-import AppBarResponsive from "./AppBarResponsive";
+import AppBarResponsive from "./layout/header/AppBarResponsive";
 import { Box } from "@mui/material";
+import KosherRestaurantCard from "./KosherRestaurantCard";
+import Header from "./layout/header/Header";
+
+
 
 function App() {
   return (
     <>
-      <AppBarResponsive />
-
-      {/* Container for the cards */}
+      <Header></Header>
+      {/* Container for the Restaurants */}
       <Box
         sx={{
           display: "flex", // Flexbox container
-          flexDirection: "column", // Stack cards vertically
-          gap: 2, // Adds space between cards (3 = 24px)
-          alignItems: "center", // Center cards horizontally
+          flexDirection: "column", // Stack Restaurants vertically
+          gap: 2, // Adds space between Restaurants (3 = 24px)
+          alignItems: "center", // Center Restaurants horizontally
           padding: 2, // Padding around the container
         }}
       >
