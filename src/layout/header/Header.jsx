@@ -4,7 +4,6 @@ import { Typography } from '@mui/material'
 import NavBar from "./NavBar"
 import CheckBoxRest from "./CheckBoxRest"
 
-import { CheckBox } from '@mui/icons-material'
 export default function Header() {
   return (
     <>
