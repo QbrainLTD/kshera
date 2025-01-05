@@ -26,7 +26,7 @@ export default function SignupPage() {
 
   const { user } = useCurrentUser();
 
-  if (user) return <Navigate replace to={ROUTES.Restaurants} />;
+  if (user) return <Navigate replace to={ROUTES.ROOT} />;
   console.log(error)
 
   return (

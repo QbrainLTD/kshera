@@ -6,7 +6,7 @@ import ROUTES from "../../../routes/routesModel";
 export default function NotLogged() {
   return (
     <Box>
-      <NavBarItem label="Signup" to={ROUTES.SIGNUP} />
+      <NavBarItem label="Signup" to={ROUTES.SIGN_UP} />
       <NavBarItem label="Login" to={ROUTES.LOGIN} />
     </Box>
   );

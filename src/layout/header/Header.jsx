@@ -8,8 +8,10 @@ export default function Header() {
     <>
   
       <AppBarResponsive></AppBarResponsive>
+      <div style={{backgroundColor:"white"}}>
       <NavBar></NavBar>
-      <CheckBoxRest></CheckBoxRest>
+        <CheckBoxRest></CheckBoxRest>
+      </div>
     </>
   )
 }
