@@ -6,7 +6,7 @@ const lastOrders = [
     id: 1,
     name: "La Marina",
     address: "1st Avenue, New York",
-    image: "https://via.placeholder.com/150", // Replace with actual image URLs
+    image: "https://s3-media0.fl.yelpcdn.com/bphoto/nJ7id8rj0Z6PbiWNWuLBPw/348s.jpg", // Replace with actual image URLs
     orderDate: "2024-12-31",
     rating: 4.5,
   },
@@ -14,7 +14,7 @@ const lastOrders = [
     id: 2,
     name: "Meat & Wine",
     address: "12 Street, London",
-    image: "https://via.placeholder.com/150",
+    image: "https://s3-media0.fl.yelpcdn.com/bphoto/nJ7id8rj0Z6PbiWNWuLBPw/348s.jpg",
     orderDate: "2024-12-29",
     rating: 4.8,
   },
@@ -22,7 +22,7 @@ const lastOrders = [
     id: 3,
     name: "The Vegan Bistro",
     address: "Main St, San Francisco",
-    image: "https://via.placeholder.com/150",
+    image: "https://s3-media0.fl.yelpcdn.com/bphoto/nJ7id8rj0Z6PbiWNWuLBPw/348s.jpg",
     orderDate: "2024-12-28",
     rating: 4.2,
   },

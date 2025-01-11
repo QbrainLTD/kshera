@@ -17,6 +17,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom"; 
 import ROUTES from "../../routes/routesModel";
+import Logo from "./logo/Logo";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -84,7 +85,10 @@ export default function PrimarySearchAppBar() {
     };
 
     const handleSignUpClick = () => {
-        navigate(ROUTES.SIGN_UP); // Navigate to the SignUpPage route
+        navigate(ROUTES.SIGN_UP); 
+    };
+    const handleLoginClick = () => {
+        navigate(ROUTES.LOGIN); 
     };
 
     const menuId = "primary-search-account-menu";
@@ -196,6 +200,7 @@ export default function PrimarySearchAppBar() {
                             inputProps={{ "aria-label": "search" }}
                         />
                     </Search>
+                    <Logo></Logo>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: "none", md: "flex" } }}>
                         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
@@ -242,7 +247,7 @@ export default function PrimarySearchAppBar() {
                     >
                         Sign-Up
                     </Typography>
-                    <Typography>Login</Typography>
+                    <Typography sx={{ margin: 1, cursor: "pointer" }} onClick={handleLoginClick}>Login</Typography>
                 </Toolbar>
             </AppBar>
             {renderMobileMenu}
