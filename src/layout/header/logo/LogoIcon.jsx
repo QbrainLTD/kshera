@@ -8,7 +8,7 @@ export default function LogoIcon() {
     <>
       <NavBarLink to={ROUTES.ROOT}>
         <IconButton>
-          <img src="/images/ksheraLogo.png" alt="Business Restaurant icon" />
+          <img src="/images/ksheraLogo.png" alt="Business Restaurant icon" style={{width: "100%", height: "3vh"}} />
         </IconButton>
       </NavBarLink>
     </>
