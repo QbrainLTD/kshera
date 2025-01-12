@@ -24,7 +24,7 @@ export default function Layout() {
         <main
           style={{
             flexGrow: 23,
-            marginTop: "180px", 
+            marginTop: "15vh", 
             overflowY: "auto",
           }}
         >

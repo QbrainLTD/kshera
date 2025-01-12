@@ -89,7 +89,7 @@ export default function GoogleMaps() {
 
     return (
         <Autocomplete
-            sx={{ width: 300 }}
+            sx={{ width: 300, bgcolor: 'white' }}
             getOptionLabel={(option) =>
                 typeof option === 'string' ? option : option.description
             }
@@ -120,6 +120,7 @@ export default function GoogleMaps() {
                     matches.map((match) => [match.offset, match.offset + match.length]),
                 );
                 return (
+                    
                     <li key={key} {...optionProps}>
                         <Grid container sx={{ alignItems: 'center' }}>
                             <Grid item sx={{ display: 'flex', width: 44 }}>

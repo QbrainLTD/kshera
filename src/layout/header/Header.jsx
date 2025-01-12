@@ -9,10 +9,7 @@ export default function Header() {
     <>
   
       <AppBarResponsive></AppBarResponsive>
-      <div style={{ marginTop:"1vh",backgroundColor: "white", display: 'flex', flexDirection: 'column', alignItems:"center" }}>
-        <LocationSearch></LocationSearch>
-        <CheckBoxRest></CheckBoxRest>
-      </div>
+      
     </>
   )
 }
