@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./header/Header";
 import Main from "./main/Main";
 import Footer from "./footer/Footer";
+import { Typography } from "@mui/material";
 
 export default function Layout() {
   return (
@@ -27,10 +28,10 @@ export default function Layout() {
             overflowY: "auto",
           }}
         >
-          <Main />
+          <Main>
+          </Main>
+          
         </main>
-
-        {/* Fixed Footer */}
 
         <Footer />
 

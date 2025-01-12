@@ -4,10 +4,12 @@ import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import useRestaurant from "../hooks/useRestaurant";
 
 const StyledCard = styled(Card)(({ theme }) => ({
     display: "flex",
@@ -30,6 +32,7 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 function KosherRestaurantCard({ restaurant }) {
+    const { handleLike, liked } = useRestaurant();
     return (
         <StyledCard >
             <Box
@@ -42,7 +45,7 @@ function KosherRestaurantCard({ restaurant }) {
                     borderRadius: "8px",
                     objectFit: "cover",
                     marginRight: 3,// Increased gap between image and text
-                    marginLeft:10,
+                    marginLeft: 10,
                 }}
             />
 
@@ -82,6 +85,15 @@ function KosherRestaurantCard({ restaurant }) {
                     {restaurant.tags.map((tag, index) => (
                         <Chip key={index} label={tag} sx={{ marginRight: 1 }} />
                     ))}
+                    <FavoriteIcon
+                        sx={{
+                            color: liked ? 'red' : 'gray', // Toggle color based on liked state
+                            fontSize: "2rem",
+                            marginRight: 25,
+                            cursor: "pointer",
+                        }}
+                        onClick={handleLike}
+                    />
                 </Box>
 
                 <Typography variant="body2" color="text.secondary" mb={2}>
