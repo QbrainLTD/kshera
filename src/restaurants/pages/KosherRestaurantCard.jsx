@@ -32,7 +32,7 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 function KosherRestaurantCard({ restaurant }) {
-    const { handleLike, liked } = useRestaurant();
+    const { handleLike, liked  } = useRestaurant();
     return (
         <StyledCard >
             <Box
@@ -87,7 +87,7 @@ function KosherRestaurantCard({ restaurant }) {
                     ))}
                     <FavoriteIcon
                         sx={{
-                            color: liked ? 'red' : 'gray', // Toggle color based on liked state
+                            color: liked ? 'red' : 'gray', 
                             fontSize: "2rem",
                             marginRight: 25,
                             cursor: "pointer",

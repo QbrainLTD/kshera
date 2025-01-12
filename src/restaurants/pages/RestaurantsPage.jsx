@@ -2,8 +2,11 @@ import React from 'react'
 import KosherRestaurantCard from "./KosherRestaurantCard";
 import { Box } from "@mui/material";
 import restaurants from "./RestaurantCard";
+import useRestaurant from '../hooks/useRestaurant';
+
 
 export default function RestaurantsPage() {
+  const { filteredRestaurant } = useRestaurant([]);
   return (
     <>
       
@@ -17,7 +20,7 @@ export default function RestaurantsPage() {
           padding: 2, // Padding around the container
         }}
       >
-        {restaurants.map((restaurant, index) => (
+        {filteredRestaurant.map((restaurant, index) => (
           <KosherRestaurantCard key={index} restaurant={restaurant} />
         ))}
       </Box>

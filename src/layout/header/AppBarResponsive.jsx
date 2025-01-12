@@ -198,6 +198,7 @@ export default function PrimarySearchAppBar() {
                         <StyledInputBase
                             placeholder="חפש…"
                             inputProps={{ "aria-label": "search" }}
+                            onChange={(e) => navigate(`?q=${e.target.value}`)} // Update query parameter on input change
                         />
                     </Search>
                     <Logo></Logo>
