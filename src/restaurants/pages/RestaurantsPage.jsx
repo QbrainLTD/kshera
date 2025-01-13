@@ -1,6 +1,6 @@
 import React from 'react';
 import KosherRestaurantCard from "./KosherRestaurantCard";
-import { Box, Container } from "@mui/material";
+import { Box } from "@mui/material";
 import useRestaurant from '../hooks/useRestaurant';
 import CheckBoxRest from "../../layout/header/CheckBoxRest";
 import LocationSearch from "../../layout/header/LocationSearch"
@@ -10,9 +10,7 @@ export default function RestaurantsPage() {
 
   return (
     <>
-      
       <CheckBoxRest onFilterChange={handleFilterTags} />
-        
       <Box
         sx={{
           display: "flex", // Flexbox container

@@ -4,6 +4,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Box from '@mui/material/Box';
 import { red, blue, green, orange, pink, purple } from '@mui/material/colors';
+import { Button } from '@mui/material';
+import ROUTES from '../../routes/routesModel';
+import { useNavigate } from 'react-router-dom';
 
 // Custom tags and corresponding colors
 const restaurantTags = [
@@ -22,7 +25,10 @@ export default function CheckBoxRest({ onFilterChange }) {
             return acc;
         }, {})
     );
-
+    const navigate = useNavigate(); 
+    const handleBtnClick = () => {
+        navigate(ROUTES.CREATE_RESTAURANT);
+    };
     const handleChange = (label) => {
         const updatedState = {
             ...checkedState,
@@ -69,6 +75,8 @@ export default function CheckBoxRest({ onFilterChange }) {
                     />
                 ))}
             </FormGroup>
+            <Button variant="contained" color='success' onClick={handleBtnClick} >הוסף מסעדה</Button>
         </Box>
+        
     );
 }

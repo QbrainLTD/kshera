@@ -1,3 +1,6 @@
+import React from "react";
+
+
 const restaurant = [
     {
         name: "La Marina",
@@ -253,6 +256,16 @@ const restaurant = [
         imageUrl: "https://elliskosherkitchen.com/wp-content/uploads/2024/09/Dine-In_Round.png.webp",
     }
 ];
+
+export const useRestaurants = () => {
+    const [restaurants, setRestaurants] = React.useState(restaurant);
+
+    const addRestaurant = (newRestaurant) => {
+        setRestaurants((prevRestaurants) => [...prevRestaurants, newRestaurant]);
+    };
+
+    return { restaurants, addRestaurant };
+};
 
 export default restaurant;
 

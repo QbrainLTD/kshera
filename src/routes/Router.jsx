@@ -7,6 +7,8 @@ import LastOrders from "../restaurants/pages/LastOrders";
 import Layout from "../layout/Layout";
 import LoginPage from "../users/pages/LoginPage";
 import SignupPage from "../users/pages/SignupPage";
+import MyRestaurantPage from "../restaurants/pages/MyRestaurantPage";
+import CreateRestaurant from "../restaurants/pages/CreateRestaurant";
 
 export default function Router() {
   return (
@@ -17,6 +19,8 @@ export default function Router() {
         <Route path={ROUTES.LAST_ORDERS} element={<LastOrders />} />
         <Route path={ROUTES.LOGIN} element={<LoginPage />} />
         <Route path={ROUTES.SIGN_UP} element={<SignupPage />} />
+        <Route path={ROUTES.My_Restaurants} element={<MyRestaurantPage />} />
+        <Route path={ROUTES.CREATE_RESTAURANT} element={<CreateRestaurant />} />
 
       </Route>
     </Routes>

@@ -17,7 +17,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     alignItems: "center",
     borderRadius: theme.spacing(2),
     padding: theme.spacing(5),
-    width: "50%",
+    width: "60%",
     backgroundColor: "#F7F9FC",
     boxShadow: "0 2px 4px rgba(12, 12, 12, 2.1)",
     direction: "rtl",
