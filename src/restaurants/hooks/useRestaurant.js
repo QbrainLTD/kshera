@@ -1,44 +1,190 @@
-import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import restaurants from "../pages/RestaurantCard";
+import ROUTES from "../../routes/routesModel";
+import normalizeRestaurant from "../helpers/normalization/normalizeRestaurant"; // Replace with your normalization helper
+import { useCurrentUser } from "../../users/providers/UserProvider";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import useAxios from "../../hooks/useAxios";
+import { useSnack } from "../../providers/SnackbarProvider";
+import { useState, useCallback, useEffect } from "react";
+import {
+    getRestaurants,
+    getRestaurant,
+    getMyRestaurants,
+    deleteRestaurant,
+    createRestaurant,
+    editRestaurant,
+    changeLikeStatus,
+} from "../services/RestaurantsApiService";
 
 export default function useRestaurant() {
-    const [liked, setLiked] = useState(false);
-    const [searchParams] = useSearchParams(); // Query parameters for search input
-    const [filteredRestaurant, setFilteredRestaurant] = useState(restaurants);
-    const [filterTags, setFilterTags] = useState([]); // State for selected tags
+    const [restaurants, setRestaurants] = useState([]); // All restaurants
+    const [restaurant, setRestaurant] = useState(); // Single restaurant details
+    const [isLoading, setIsLoading] = useState(true); // Loading state
+    const [error, setError] = useState(null); // Error state
+    const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Filtered restaurants
+    const [favoriteRestaurants, setFavoriteRestaurants] = useState([]); // Favorite restaurants
+    const [searchParams] = useSearchParams(); // For search query
+    const { user } = useCurrentUser(); // Current user context
+    const setSnack = useSnack(); // Snackbar for notifications
+    const navigate = useNavigate();
+    useAxios();
 
-    const handleLike = () => {
-        setLiked(!liked);
-    };
+    // Fetch all restaurants
+    const fetchRestaurants = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const data = await getRestaurants();
+            setRestaurants(data);
+            setFilteredRestaurants(data); // Initialize filtered state
+            setSnack("success", "Restaurants loaded successfully!");
+        } catch (err) {
+            setError(err.message || "Failed to fetch restaurants");
+            setSnack("error", err.message || "Failed to load restaurants");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [setSnack]);
 
-    const handleFilterTags = (tags) => {
-        setFilterTags(tags); // Update selected tags
-    };
+    // Fetch my restaurants
+    const fetchMyRestaurants = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const data = await getMyRestaurants();
+            setRestaurants(data);
+            setFilteredRestaurants(data); // Update filtered state
+            setSnack("success", "Your restaurants loaded successfully!");
+        } catch (err) {
+            setError(err.message || "Failed to fetch your restaurants");
+            setSnack("error", err.message || "Failed to load your restaurants");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [setSnack]);
 
+    // Fetch single restaurant by ID
+    const fetchRestaurantById = useCallback(async (id) => {
+        setIsLoading(true);
+        try {
+            const data = await getRestaurant(id);
+            setRestaurant(data);
+            setSnack("success", `Restaurant ${data.name} loaded successfully!`);
+        } catch (err) {
+            setError(err.message || `Failed to fetch restaurant with ID ${id}`);
+            setSnack("error", err.message || "Failed to load restaurant");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [setSnack]);
+
+    // Add a new restaurant
+    const addRestaurant = useCallback(async (newRestaurant) => {
+        setIsLoading(true);
+        try {
+            const normalizedRestaurant = normalizeRestaurant(newRestaurant);
+            const data = await createRestaurant(normalizedRestaurant);
+            setRestaurants((prev) => [...prev, data]);
+            setSnack("success", "New restaurant created successfully!");
+            navigate(ROUTES.ROOT); // Redirect after success
+        } catch (err) {
+            setError(err.message || "Failed to create restaurant");
+            setSnack("error", err.message || "Failed to create restaurant");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [setSnack, navigate]);
+
+    // Update a restaurant
+    const updateRestaurant = useCallback(async (id, updatedData) => {
+        setIsLoading(true);
+        try {
+            const normalizedRestaurant = normalizeRestaurant(updatedData);
+            const data = await editRestaurant(id, normalizedRestaurant);
+            setRestaurants((prev) =>
+                prev.map((restaurant) =>
+                    restaurant._id === id ? { ...restaurant, ...data } : restaurant
+                )
+            );
+            setSnack("success", "Restaurant updated successfully!");
+        } catch (err) {
+            setError(err.message || "Failed to update restaurant");
+            setSnack("error", err.message || "Failed to update restaurant");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [setSnack]);
+
+    // Delete a restaurant
+    const deleteRestaurantById = useCallback(async (id) => {
+        setIsLoading(true);
+        try {
+            await deleteRestaurant(id);
+            setRestaurants((prev) => prev.filter((restaurant) => restaurant._id !== id));
+            setSnack("success", "Restaurant deleted successfully!");
+        } catch (err) {
+            setError(err.message || "Failed to delete restaurant");
+            setSnack("error", err.message || "Failed to delete restaurant");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [setSnack]);
+
+    // Like/unlike a restaurant
+    const toggleLike = useCallback(async (id) => {
+        setIsLoading(true);
+        try {
+            const data = await changeLikeStatus(id);
+            setRestaurants((prev) =>
+                prev.map((restaurant) =>
+                    restaurant._id === id ? { ...restaurant, ...data } : restaurant
+                )
+            );
+            setSnack("success", `Restaurant ${data.isLiked ? "liked" : "unliked"}!`);
+        } catch (err) {
+            setError(err.message || "Failed to update like status");
+            setSnack("error", err.message || "Failed to update like status");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [setSnack]);
+
+    // Filter restaurants based on query
     useEffect(() => {
-        const query = searchParams.get("q")?.toLowerCase() || ""; // Get search query
+        const query = searchParams.get("q")?.toLowerCase() || "";
 
-        // Filter based on query and tags
         const filtered = restaurants.filter((restaurant) => {
             const matchesQuery =
                 restaurant.name.toLowerCase().includes(query) ||
                 restaurant.description.toLowerCase().includes(query);
 
-            const matchesTags =
-                filterTags.length === 0 || // No tags selected
-                restaurant.tags.some((tag) => filterTags.includes(tag));
-
-            return matchesQuery && matchesTags; // Must match both query and tags
+            return matchesQuery;
         });
 
-        setFilteredRestaurant(filtered);
-    }, [searchParams, filterTags]); // Re-run filtering when searchParams or tags change
+        setFilteredRestaurants(filtered);
+    }, [searchParams, restaurants]);
+
+    const handleFilterTags = (tags) => {
+        setFilteredRestaurants(
+            restaurants.filter((restaurant) =>
+                tags.length === 0
+                    ? true // Show all restaurants if no tags are selected
+                    : restaurant.tags.some((tag) => tags.includes(tag))
+            )
+        );
+    };
 
     return {
-        handleLike,
-        liked,
-        filteredRestaurant,
-        handleFilterTags, // Expose tag filter handler
+        restaurants,
+        restaurant,
+        filteredRestaurants,
+        favoriteRestaurants,
+        isLoading,
+        error,
+        fetchRestaurants,
+        fetchMyRestaurants,
+        fetchRestaurantById,
+        addRestaurant,
+        updateRestaurant,
+        deleteRestaurantById,
+        toggleLike,
+        handleFilterTags,
     };
 }

@@ -8,7 +8,7 @@ import {
   Checkbox,
   Typography,
 } from "@mui/material";
-import { useRestaurants } from "./RestaurantCard";
+import useRestaurant from "../hooks/useRestaurant";
 import { red, blue, green, orange, pink, purple } from "@mui/material/colors";
 
 const restaurantTags = [
@@ -21,20 +21,18 @@ const restaurantTags = [
 ];
 
 export default function CreateRestaurant() {
-  const { addRestaurant } = useRestaurants();
+  const { addRestaurant } = useRestaurant();
   const [formData, setFormData] = useState({
     name: "",
     address: "",
+    description: "",
     tags: [],
     imageUrl: "",
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleTagChange = (tag) => {
@@ -46,17 +44,17 @@ export default function CreateRestaurant() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newRestaurant = {
       ...formData,
       rating: 0,
       status: "פתוח",
-      distance: "0.0 ק''מ",
+      distance: "0 ק''מ",
       kosher: true,
     };
-    addRestaurant(newRestaurant); // Add to the global restaurant list
-    setFormData({ name: "", address: "", tags: [], imageUrl: "" }); // Reset form
+    await addRestaurant(newRestaurant); // Call the hook to add the restaurant
+    setFormData({ name: "", address: "", description: "", tags: [], imageUrl: "" }); // Reset form
   };
 
   return (
@@ -94,6 +92,14 @@ export default function CreateRestaurant() {
           required
         />
         <TextField
+          label="תיאור המסעדה"
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
+          fullWidth
+          multiline
+        />
+        <TextField
           label="תמונת מסעדה (כתובת URL)"
           name="imageUrl"
           value={formData.imageUrl}
@@ -113,9 +119,7 @@ export default function CreateRestaurant() {
                   onChange={() => handleTagChange(label)}
                   sx={{
                     color: color,
-                    "&.Mui-checked": {
-                      color: color,
-                    },
+                    "&.Mui-checked": { color: color },
                   }}
                 />
               }

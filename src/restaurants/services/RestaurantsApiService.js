@@ -1,5 +1,5 @@
 import axios from "axios";
-const apiUrl = "https://monkfish-app-z9uza.ondigitalocean.app/bRestaurant2/Restaurants";
+const apiUrl = "http://localhost:5000/api/restaurants";
 
 export const getRestaurants = async () => {
   try {
@@ -48,6 +48,8 @@ export const deleteRestaurant = async (RestaurantId) => {
     return Promise.reject(error.message);
   }
 };
+
+
 
 export const createRestaurant = async (Restaurant) => {
   try {
