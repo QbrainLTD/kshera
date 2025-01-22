@@ -98,6 +98,7 @@ export default function CreateRestaurant() {
           onChange={handleInputChange}
           fullWidth
           multiline
+          required
         />
         <TextField
           label="תמונת מסעדה (כתובת URL)"
@@ -105,6 +106,7 @@ export default function CreateRestaurant() {
           value={formData.imageUrl}
           onChange={handleInputChange}
           fullWidth
+          required
         />
         <Typography variant="h6" gutterBottom>
           בחר תגיות:
@@ -124,6 +126,7 @@ export default function CreateRestaurant() {
                 />
               }
               label={<span style={{ fontSize: "1.2rem" }}>{label}</span>}
+              
             />
           ))}
         </FormGroup>

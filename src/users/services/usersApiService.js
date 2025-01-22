@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const apiUrl = "https://monkfish-app-z9uza.ondigitalocean.app/bRestaurant2/users";
+const apiUrl = "http://localhost:5000/api/restaurants";
 
 export const login = async (userLogin) => {
   try {

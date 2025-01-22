@@ -38,7 +38,13 @@ export default function RestaurantsPage() {
         }}
       >
         {filteredRestaurants.map((restaurant, index) => (
-          <KosherRestaurantCard key={index} restaurant={restaurant} />
+          <KosherRestaurantCard
+            key={index}
+            restaurant={{
+              ...restaurant,
+              isLiked: restaurant.isLiked !== undefined ? restaurant.isLiked : false, // Defaulting isLiked
+            }}
+          />
         ))}
       </Box>
     </>

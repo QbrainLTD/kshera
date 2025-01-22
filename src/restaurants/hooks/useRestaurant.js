@@ -128,23 +128,37 @@ export default function useRestaurant() {
     }, [setSnack]);
 
     // Like/unlike a restaurant
-    const toggleLike = useCallback(async (id) => {
-        setIsLoading(true);
-        try {
-            const data = await changeLikeStatus(id);
-            setRestaurants((prev) =>
-                prev.map((restaurant) =>
-                    restaurant._id === id ? { ...restaurant, ...data } : restaurant
-                )
-            );
-            setSnack("success", `Restaurant ${data.isLiked ? "liked" : "unliked"}!`);
-        } catch (err) {
-            setError(err.message || "Failed to update like status");
-            setSnack("error", err.message || "Failed to update like status");
-        } finally {
-            setIsLoading(false);
-        }
-    }, [setSnack]);
+    const toggleLike = useCallback(
+        async (id) => {
+            setIsLoading(true);
+            try {
+                const data = await changeLikeStatus(id);
+
+                // Update the restaurants state
+                setRestaurants((prev) =>
+                    prev.map((restaurant) =>
+                        restaurant._id === id ? { ...restaurant, ...data } : restaurant
+                    )
+                );
+
+                // Update the favoriteRestaurants state
+                setFavoriteRestaurants((prev) =>
+                    data.isLiked
+                        ? [...prev, { ...data }] // Add to favorites
+                        : prev.filter((fav) => fav._id !== id) // Remove from favorites
+                );
+
+                setSnack("success", `Restaurant ${data.isLiked ? "liked" : "unliked"}!`);
+            } catch (err) {
+                setError(err.message || "Failed to update like status");
+                setSnack("error", err.message || "Failed to update like status");
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [setSnack]
+    );
+    
 
     // Filter restaurants based on query
     useEffect(() => {

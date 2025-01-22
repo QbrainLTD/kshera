@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
@@ -9,7 +9,7 @@ import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import useRestaurant from "../hooks/useRestaurant";
+import useRestaurant from "../hooks/useRestaurant"; // Ensure you import useRestaurant
 
 const StyledCard = styled(Card)(({ theme }) => ({
     display: "flex",
@@ -32,9 +32,14 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 function KosherRestaurantCard({ restaurant }) {
-    const { handleLike, liked  } = useRestaurant();
+    const { toggleLike } = useRestaurant(); // Get toggleLike from the custom hook
+
+    const handleLikeClick = () => {
+        toggleLike(restaurant._id); // Pass restaurant ID to toggleLike
+    };
+
     return (
-        <StyledCard >
+        <StyledCard>
             <Box
                 component="img"
                 src={restaurant.imageUrl}
@@ -44,11 +49,10 @@ function KosherRestaurantCard({ restaurant }) {
                     height: 300,
                     borderRadius: "8px",
                     objectFit: "cover",
-                    marginRight: 3,// Increased gap between image and text
+                    marginRight: 3,
                     marginLeft: 10,
                 }}
             />
-
             <Box flex={2}>
                 <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
                     <Box>
@@ -87,12 +91,12 @@ function KosherRestaurantCard({ restaurant }) {
                     ))}
                     <FavoriteIcon
                         sx={{
-                            color: liked ? 'red' : 'gray', 
+                            color: restaurant.isLiked ? "red" : "gray",
                             fontSize: "2rem",
                             marginRight: 25,
                             cursor: "pointer",
                         }}
-                        onClick={handleLike}
+                        onClick={handleLikeClick} // Call handleLikeClick on icon click
                     />
                 </Box>
 
@@ -113,7 +117,6 @@ function KosherRestaurantCard({ restaurant }) {
     );
 }
 
-// Define PropTypes for the KosherRestaurantCard component
 KosherRestaurantCard.propTypes = {
     restaurant: PropTypes.shape({
         name: PropTypes.string.isRequired,
@@ -125,6 +128,7 @@ KosherRestaurantCard.propTypes = {
         tags: PropTypes.arrayOf(PropTypes.string).isRequired,
         description: PropTypes.string.isRequired,
         imageUrl: PropTypes.string.isRequired,
+        isLiked: PropTypes.bool.isRequired, // Ensure isLiked is included in the propTypes
     }).isRequired,
 };
 
