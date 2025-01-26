@@ -21,6 +21,9 @@ import Logo from "./logo/Logo";
 import LocationSearch from "./LocationSearch"
 import { Margin } from "@mui/icons-material";
 import { colors } from "@mui/material";
+import Logged from "././right-navigation/Logged";
+import NotLogged from "././right-navigation/NotLogged";
+import { useCurrentUser } from "../../users/providers/UserProvider";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -63,6 +66,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function PrimarySearchAppBar() {
     const navigate = useNavigate(); 
+    const { user } = useCurrentUser();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -248,13 +252,7 @@ export default function PrimarySearchAppBar() {
                             <MoreIcon />
                         </IconButton>
                     </Box>
-                    <Typography
-                        sx={{ margin: 3, cursor: "pointer" }}
-                        onClick={handleSignUpClick}
-                    >
-                        Sign-Up
-                    </Typography>
-                    <Typography sx={{ margin: 1, cursor: "pointer" }} onClick={handleLoginClick}>Login</Typography>
+                    {user ? <Logged /> : <NotLogged />}
                 </Toolbar>
             </AppBar>
             {renderMobileMenu}
