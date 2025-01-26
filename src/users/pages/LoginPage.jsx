@@ -68,7 +68,7 @@ export default function LoginPage() {
             <Button
               variant="outlined"
               component={Link}
-              to={ROUTES.SIGNUP}
+              to={ROUTES.SIGN_UP}
               startIcon={<AccountBoxIcon />}
               sx={{ width: "100%" }}
             >
