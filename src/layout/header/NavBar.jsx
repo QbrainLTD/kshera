@@ -7,6 +7,7 @@ import PersonPinIcon from '@mui/icons-material/PersonPin';
 import { Box } from '@mui/material';
 import ROUTES from '../../routes/routesModel';
 import { useNavigate } from "react-router-dom";
+import InfoIcon from '@mui/icons-material/Info';
 
 export default function IconLabelTabs() {
   const [value, setValue] = React.useState(0);
@@ -18,6 +19,7 @@ export default function IconLabelTabs() {
     if (newValue === 0) navigate(ROUTES.LAST_ORDERS);
     if (newValue === 1) navigate(ROUTES.FAV_REST);
     if (newValue === 2) navigate(ROUTES.ROOT);
+    if (newValue === 3) navigate(ROUTES.ABOUT_PAGE);
   };
 
   return (
@@ -27,6 +29,7 @@ export default function IconLabelTabs() {
       alignItems="center"
       padding="2vh"
     >
+      
       <Tabs value={value} onChange={handleChange} aria-label="icon label tabs example">
         <Tab
           icon={<PhoneIcon sx={{ color: '#00e676', fontSize: "2rem" }} />}
@@ -39,6 +42,10 @@ export default function IconLabelTabs() {
         <Tab
           icon={<PersonPinIcon sx={{ color: '#607d8b', fontSize: "2rem" }} />}
           label="קרוב אליי"
+        />
+        <Tab
+          icon={<InfoIcon sx={{ color: '#f50057', fontSize: "2rem" }} />}
+          label="אודות"
         />
       </Tabs>
     </Box>

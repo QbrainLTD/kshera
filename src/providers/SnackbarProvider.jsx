@@ -27,14 +27,14 @@ export default function SnackbarProvider({ children }) {
       </SnackbarContext.Provider>
 
       <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         open={isSnackOpen}
         onClose={() => {
           setOpenSnack(false);
         }}
         autoHideDuration={2000}
         sx={{
-          top: '10vh', 
+          bottom: '20vh', 
           right: '0',  
           transform: 'none' 
         }}

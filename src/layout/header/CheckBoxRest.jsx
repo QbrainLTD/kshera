@@ -7,6 +7,8 @@ import { red, blue, green, orange, pink, purple } from '@mui/material/colors';
 import { Button } from '@mui/material';
 import ROUTES from '../../routes/routesModel';
 import { useNavigate } from 'react-router-dom';
+import { useCurrentUser } from '../../users/providers/UserProvider';
+
 
 // Custom tags and corresponding colors
 const restaurantTags = [
@@ -25,6 +27,8 @@ export default function CheckBoxRest({ onFilterChange }) {
             return acc;
         }, {})
     );
+
+    const { user } = useCurrentUser();
     const navigate = useNavigate(); 
     const handleBtnClick = () => {
         navigate(ROUTES.CREATE_RESTAURANT);
@@ -75,7 +79,11 @@ export default function CheckBoxRest({ onFilterChange }) {
                     />
                 ))}
             </FormGroup>
-            <Button variant="contained" color='success' onClick={handleBtnClick} >הוסף מסעדה</Button>
+            {user ? (
+                <Button variant="contained" color="success" onClick={handleBtnClick}>
+                    הוסף מסעדה
+                </Button>
+            ) : null}
         </Box>
         
     );

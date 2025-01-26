@@ -6,7 +6,8 @@ const ROUTES = {
   LOGIN: "/LoginPage",
   SIGN_UP: "/SignupPage",
   My_Restaurants: "/MyRestaurantPage",
-  CREATE_RESTAURANT:"/CreateRestaurant"
+  CREATE_RESTAURANT: "/CreateRestaurant",
+  ABOUT_PAGE:"/aboutPage"
 };
 
 export default ROUTES;

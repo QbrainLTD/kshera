@@ -9,6 +9,7 @@ import LoginPage from "../users/pages/LoginPage";
 import SignupPage from "../users/pages/SignupPage";
 import MyRestaurantPage from "../restaurants/pages/MyRestaurantPage";
 import CreateRestaurant from "../restaurants/pages/CreateRestaurant";
+import AboutPage from "../pages/AboutPage";
 
 export default function Router() {
   return (
@@ -21,6 +22,7 @@ export default function Router() {
         <Route path={ROUTES.SIGN_UP} element={<SignupPage />} />
         <Route path={ROUTES.My_Restaurants} element={<MyRestaurantPage />} />
         <Route path={ROUTES.CREATE_RESTAURANT} element={<CreateRestaurant />} />
+        <Route path={ROUTES.ABOUT_PAGE} element={<AboutPage />} />
 
       </Route>
     </Routes>
