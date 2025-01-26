@@ -1,5 +1,5 @@
 import axios from "axios";
-const apiUrl = "http://localhost:27017/restaurants";
+const apiUrl = "http://localhost:5000/restaurant";
 
 export const getRestaurants = async () => {
   try {

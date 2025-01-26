@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const apiUrl = "http://localhost:27017/restaurantDB";
+const apiUrl = "http://localhost:5000/users";
 
 export const login = async (userLogin) => {
   try {
