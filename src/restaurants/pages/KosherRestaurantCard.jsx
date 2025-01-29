@@ -16,11 +16,29 @@ const StyledCard = styled(Card)(({ theme }) => ({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: theme.spacing(2),
-    padding: theme.spacing(5),
-    width: "60%",
+    padding: theme.spacing(2),
+    width: "100%",
+    maxWidth: "800px",
     backgroundColor: "#F7F9FC",
-    boxShadow: "0 2px 4px rgba(12, 12, 12, 2.1)",
+    boxShadow: "0 2px 4px rgba(12, 12, 12, 0.2)",
     direction: "rtl",
+    gap: theme.spacing(2),
+    [theme.breakpoints.down("sm")]: {
+        flexDirection: "column", // Stack content on small screens
+        textAlign: "center",
+        alignItems: "center",
+    },
+}));
+
+const StyledImage = styled(Box)(({ theme }) => ({
+    width: "200px",
+    height: "200px",
+    borderRadius: "8px",
+    objectFit: "cover",
+    [theme.breakpoints.down("sm")]: {
+        width: "100%", // Full width on small screens
+        height: "auto",
+    },
 }));
 
 const ActionButton = styled(Button)(({ theme }) => ({
@@ -40,29 +58,13 @@ function KosherRestaurantCard({ restaurant }) {
 
     return (
         <StyledCard>
-            <Box
-                component="img"
-                src={restaurant.imageUrl}
-                alt={restaurant.name}
-                sx={{
-                    width: 300,
-                    height: 300,
-                    borderRadius: "8px",
-                    objectFit: "cover",
-                    marginRight: 3,
-                    marginLeft: 10,
-                }}
-            />
-            <Box flex={2}>
-                <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
-                    <Box>
-                        <Typography variant="h4" fontWeight="bold">
-                            {restaurant.name}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {restaurant.address}
-                        </Typography>
-                    </Box>
+            <StyledImage component="img" src={restaurant.imageUrl} alt={restaurant.name} />
+
+            <Box flex={2} sx={{ width: "100%", padding: 2 }}>
+                <Box display="flex" alignItems="center" justifyContent="space-between" mb={1} sx={{ flexWrap: "wrap" }}>
+                    <Typography variant="h5" fontWeight="bold">
+                        {restaurant.name}
+                    </Typography>
                     <Chip
                         label={restaurant.rating}
                         color="primary"
@@ -71,29 +73,24 @@ function KosherRestaurantCard({ restaurant }) {
                     />
                 </Box>
 
+                <Typography variant="body2" color="text.secondary">
+                    {restaurant.address}
+                </Typography>
+
                 <Typography variant="body2" color={restaurant.status === "סגור" ? "error" : "success"} mb={2}>
                     {restaurant.status}
                 </Typography>
 
-                <Box display="flex" alignItems="center" mb={2}>
-                    <Chip
-                        icon={<LocationOnIcon />}
-                        label={restaurant.distance}
-                        sx={{ marginRight: 1 }}
-                    />
-                    <Chip
-                        label={restaurant.kosher ? "כשר" : "לא כשר"}
-                        color={restaurant.kosher ? "success" : "warning"}
-                        sx={{ marginRight: 1 }}
-                    />
+                <Box display="flex" alignItems="center" justifyContent="center" flexWrap="wrap" mb={2} gap={1}>
+                    <Chip icon={<LocationOnIcon />} label={restaurant.distance} />
+                    <Chip label={restaurant.kosher ? "כשר" : "לא כשר"} color={restaurant.kosher ? "success" : "warning"} />
                     {restaurant.tags.map((tag, index) => (
-                        <Chip key={index} label={tag} sx={{ marginRight: 1 }} />
+                        <Chip key={index} label={tag} />
                     ))}
                     <FavoriteIcon
                         sx={{
                             color: restaurant.isLiked ? "red" : "gray",
                             fontSize: "2rem",
-                            marginRight: 25,
                             cursor: "pointer",
                         }}
                         onClick={handleLikeClick} // Call handleLikeClick on icon click
@@ -104,7 +101,7 @@ function KosherRestaurantCard({ restaurant }) {
                     {restaurant.description}
                 </Typography>
 
-                <Box display="flex" gap={1}>
+                <Box display="flex" justifyContent="center" gap={1}>
                     <ActionButton variant="contained" color="primary">
                         ניווט
                     </ActionButton>
@@ -128,7 +125,7 @@ KosherRestaurantCard.propTypes = {
         tags: PropTypes.arrayOf(PropTypes.string).isRequired,
         description: PropTypes.string.isRequired,
         imageUrl: PropTypes.string.isRequired,
-        isLiked: PropTypes.bool.isRequired, // Ensure isLiked is included in the propTypes
+        isLiked: PropTypes.bool.isRequired,
     }).isRequired,
 };
 

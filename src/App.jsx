@@ -9,7 +9,7 @@ function App() {
     <BrowserRouter>
       <SnackbarProvider>
         <UserProvider>
-          <MenuProvider> {/* ✅ Wrap everything inside MenuProvider */}
+          <MenuProvider> 
             <Router />
           </MenuProvider>
         </UserProvider>

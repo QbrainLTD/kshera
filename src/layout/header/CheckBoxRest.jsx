@@ -8,9 +8,9 @@ import { Button } from '@mui/material';
 import ROUTES from '../../routes/routesModel';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentUser } from '../../users/providers/UserProvider';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
-
-// Custom tags and corresponding colors
 const restaurantTags = [
     { label: 'בשרי', color: red[800] },
     { label: 'חלבי', color: blue[800] },
@@ -23,43 +23,54 @@ const restaurantTags = [
 export default function CheckBoxRest({ onFilterChange }) {
     const [checkedState, setCheckedState] = useState(
         restaurantTags.reduce((acc, { label }) => {
-            acc[label] = false; // Initialize all checkboxes as unchecked
+            acc[label] = false;
             return acc;
         }, {})
     );
 
     const { user } = useCurrentUser();
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery("(max-width:1800px)"); // Below 1200px
+
     const handleBtnClick = () => {
         navigate(ROUTES.CREATE_RESTAURANT);
     };
+
     const handleChange = (label) => {
         const updatedState = {
             ...checkedState,
-            [label]: !checkedState[label], // Toggle the state for the clicked checkbox
+            [label]: !checkedState[label],
         };
         setCheckedState(updatedState);
 
-        // Pass selected tags to the parent component
         const selectedTags = Object.keys(updatedState).filter((key) => updatedState[key]);
-        onFilterChange(selectedTags); // Call the parent function with the selected tags
+        onFilterChange(selectedTags);
     };
 
     return (
         <Box
             sx={{
-                position: 'fixed', // Fix the position
-                top: '20%', // Adjust the top position as needed
-                right: '5%', // Adjust the left position as needed
-                zIndex: 1000, // Ensure it stays above other elements
-                backgroundColor: '#fff', // Optional: add a background color
-                border: '1px solid #ddd', // Optional: border for better visibility
-                borderRadius: '8px', // Rounded corners
-                padding: 2, // Add padding
-                boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', // Optional: shadow for elevation
+                position: isSmallScreen ? "relative" : "absolute",
+                top: isSmallScreen ? "auto" : "25%",
+                right: isSmallScreen ? "auto" : "18%",
+                zIndex: 1000,
+                backgroundColor: '#fff',
+                border: isSmallScreen ? "none" : "1px solid #ddd",
+                borderRadius: "8px",
+                padding: 2,
+                boxShadow: isSmallScreen ? "none" : "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                display: "flex",
+                flexDirection: isSmallScreen ? "row" : "column",
+                alignItems: "center",
+                justifyContent: "center",
+                flexWrap: isSmallScreen ? "wrap" : "nowrap",
+                gap: 1,
+                width: isSmallScreen ? "100%" : "auto",
+                overflowX: isSmallScreen ? "auto" : "visible",
             }}
         >
-            <FormGroup>
+            <FormGroup row={isSmallScreen} sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {restaurantTags.map(({ label, color }) => (
                     <FormControlLabel
                         key={label}
@@ -69,22 +80,28 @@ export default function CheckBoxRest({ onFilterChange }) {
                                 onChange={() => handleChange(label)}
                                 sx={{
                                     color: color,
-                                    '&.Mui-checked': {
-                                        color: color,
-                                    },
+                                    '&.Mui-checked': { color: color },
                                 }}
                             />
                         }
-                        label={<span style={{ fontSize: '1.2rem' }}>{label}</span>}
+                        label={<span style={{ fontSize: '1rem' }}>{label}</span>}
                     />
                 ))}
             </FormGroup>
-            {user ? (
-                <Button variant="contained" color="success" onClick={handleBtnClick}>
+
+            {user && (
+                <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleBtnClick}
+                    sx={{
+                        whiteSpace: "nowrap",
+                        minWidth: isSmallScreen ? "120px" : "auto",
+                    }}
+                >
                     הוסף מסעדה
                 </Button>
-            ) : null}
+            )}
         </Box>
-        
     );
 }

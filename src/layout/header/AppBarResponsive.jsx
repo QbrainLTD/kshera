@@ -6,22 +6,16 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import ROUTES from "../../routes/routesModel";
 import Logo from "./logo/Logo";
-import { Margin } from "@mui/icons-material";
-import { colors } from "@mui/material";
-import Logged from "././right-navigation/Logged";
-import NotLogged from "././right-navigation/NotLogged";
+import Logged from "./right-navigation/Logged";
+import NotLogged from "./right-navigation/NotLogged";
 import { useCurrentUser } from "../../users/providers/UserProvider";
 
 const Search = styled("div")(({ theme }) => ({
@@ -64,7 +58,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const { user } = useCurrentUser();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -88,13 +82,6 @@ export default function PrimarySearchAppBar() {
 
     const handleMobileMenuOpen = (event) => {
         setMobileMoreAnchorEl(event.currentTarget);
-    };
-
-    const handleSignUpClick = () => {
-        navigate(ROUTES.SIGN_UP); 
-    };
-    const handleLoginClick = () => {
-        navigate(ROUTES.LOGIN); 
     };
 
     const menuId = "primary-search-account-menu";
@@ -137,36 +124,7 @@ export default function PrimarySearchAppBar() {
             onClose={handleMobileMenuClose}
         >
             <MenuItem>
-                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="error">
-                        <MailIcon />
-                    </Badge>
-                </IconButton>
-                <p>Messages</p>
-            </MenuItem>
-            <MenuItem>
-                <IconButton
-                    size="large"
-                    aria-label="show 17 new notifications"
-                    color="inherit"
-                >
-                    <Badge badgeContent={17} color="error">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
-                <p>Notifications</p>
-            </MenuItem>
-            <MenuItem onClick={handleProfileMenuOpen}>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <AccountCircle />
-                </IconButton>
-                <p>Profile</p>
+                {user ? <Logged /> : <NotLogged />}
             </MenuItem>
         </Menu>
     );
@@ -186,6 +144,7 @@ export default function PrimarySearchAppBar() {
                         color="inherit"
                         aria-label="open drawer"
                         sx={{ mr: 2 }}
+                        onClick={handleMobileMenuOpen} // Opens mobile menu
                     >
                         <MenuIcon />
                     </IconButton>
@@ -204,41 +163,16 @@ export default function PrimarySearchAppBar() {
                         <StyledInputBase
                             placeholder="חפש…"
                             inputProps={{ "aria-label": "search" }}
-                            onChange={(e) => navigate(`?q=${e.target.value}`)} // Update query parameter on input change
+                            onChange={(e) => navigate(`?q=${e.target.value}`)}
                         />
                     </Search>
-                    <Logo></Logo>
-                    <Box sx={{paddingLeft:"20%"}}>
-                       
-                    </Box>
+                    <Logo />
                     <Box sx={{ flexGrow: 1 }} />
+                    {/* Hide Logged/NotLogged from mobile view */}
                     <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="error">
-                                <MailIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            aria-label="show 17 new notifications"
-                            color="inherit"
-                        >
-                            <Badge badgeContent={10} color="error">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
+                        {user ? <Logged /> : <NotLogged />}
                     </Box>
+                    {/* Show menu icon in mobile view */}
                     <Box sx={{ display: { xs: "flex", md: "none" } }}>
                         <IconButton
                             size="large"
@@ -251,7 +185,6 @@ export default function PrimarySearchAppBar() {
                             <MoreIcon />
                         </IconButton>
                     </Box>
-                    {user ? <Logged /> : <NotLogged />}
                 </Toolbar>
             </AppBar>
             {renderMobileMenu}
