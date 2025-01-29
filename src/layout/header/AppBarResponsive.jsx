@@ -18,7 +18,6 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom"; 
 import ROUTES from "../../routes/routesModel";
 import Logo from "./logo/Logo";
-import LocationSearch from "./LocationSearch"
 import { Margin } from "@mui/icons-material";
 import { colors } from "@mui/material";
 import Logged from "././right-navigation/Logged";
@@ -210,7 +209,7 @@ export default function PrimarySearchAppBar() {
                     </Search>
                     <Logo></Logo>
                     <Box sx={{paddingLeft:"20%"}}>
-                        <LocationSearch></LocationSearch>
+                       
                     </Box>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: "none", md: "flex" } }}>

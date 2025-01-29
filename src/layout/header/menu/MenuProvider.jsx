@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useContext,
-  useRef,
-  useEffect,
-  createContext,
-} from "react";
+import React, { useState, useContext, useRef, useEffect, createContext } from "react";
 import { node } from "prop-types";
 import Box from "@mui/material/Box";
 import Menu from "./Menu";
@@ -17,8 +11,8 @@ export const MenuProvider = ({ children }) => {
   const theme = useMuiTheme();
   const screenSize = useMediaQuery(theme.breakpoints.up("md"));
 
-  const [isOpen, setOpen] = useState(true);
-  const [anchorEL, setAnchor] = useState(null);
+  const [isOpen, setOpen] = useState(false); // Default menu state is closed
+  const [anchorEl, setAnchor] = useState(null);
   const anchorRef = useRef();
 
   useEffect(() => {
@@ -26,12 +20,15 @@ export const MenuProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    setOpen(false);
+    setOpen(false); // Close the menu when screen size changes
   }, [screenSize]);
 
   return (
     <>
-      <MenuContext.Provider value={setOpen}>{children}</MenuContext.Provider>
+      {/* Provide BOTH state (isOpen) and the setter function (setOpen) */}
+      <MenuContext.Provider value={{ isOpen, setOpen, anchorEl }}>
+        {children}
+      </MenuContext.Provider>
 
       <Box
         ref={anchorRef}
@@ -39,10 +36,10 @@ export const MenuProvider = ({ children }) => {
         position="fixed"
         top="70px"
         right="20px"
-      ></Box>
-      {anchorEL && (
+      />
+      {anchorEl && (
         <Menu
-          anchorEl={anchorEL}
+          anchorEl={anchorEl}
           isOpen={isOpen}
           onClose={() => setOpen(false)}
         />
@@ -53,7 +50,9 @@ export const MenuProvider = ({ children }) => {
 
 export const useMenu = () => {
   const context = useContext(MenuContext);
-  if (context) throw new Error("useMenu must be used within a MenuProvider!");
+  if (!context) {
+    throw new Error("useMenu must be used within a MenuProvider!");
+  }
   return context;
 };
 

@@ -4,7 +4,7 @@ import NavBarLink from "./NavBarLink";
 import MenuItem from "@mui/material/MenuItem";
 import { makeFirstLetterCapital } from "../../layout/header/menu/utils/algoMethods";
 
-const MenuLink = ({ text, navigateTo, onClick, styles }) => {
+const MenuLink = ({ text = "Default", navigateTo = "/", onClick, styles = {} }) => {
   return (
     <NavBarLink to={navigateTo}>
       <MenuItem sx={{ ...styles }} onClick={onClick}>
@@ -18,10 +18,6 @@ MenuLink.propTypes = {
   navigateTo: string.isRequired,
   onClick: func.isRequired,
   text: string.isRequired,
-};
-
-MenuLink.defaultProps = {
-  styles: {},
 };
 
 export default MenuLink;
