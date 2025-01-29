@@ -51,13 +51,13 @@ export const deleteRestaurant = async (RestaurantId) => {
 
 
 
-export const createRestaurant = async (Restaurant) => {
+export const createRestaurant = async (restaurant) => {
   try {
     const token = localStorage.getItem("my token"); 
 
     const { data } = await axios.post(
       `${apiUrl}`,
-      Restaurant,
+      restaurant,
       {
         headers: {
           "x-auth-token": token  

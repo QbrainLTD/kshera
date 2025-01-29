@@ -7,33 +7,61 @@ import {
   FormControlLabel,
   Checkbox,
   Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import useRestaurant from "../hooks/useRestaurant";
-import { red, blue, green, orange, pink, purple } from "@mui/material/colors";
+import useCountries from "../hooks/useCountries"; 
+import { useCurrentUser } from "../../users/providers/UserProvider";
+
+
+const timeSlots = Array.from({ length: 48 }, (_, i) => {
+  const hours = String(Math.floor(i / 2)).padStart(2, "0");
+  const minutes = i % 2 === 0 ? "00" : "30";
+  return `${hours}:${minutes}`;
+});
 
 const restaurantTags = [
-  { label: "בשרי", color: red[800] },
-  { label: "חלבי", color: blue[800] },
-  { label: "אסייתי", color: green[800] },
-  { label: "מינימרקט", color: orange[800] },
-  { label: "קינוחים", color: pink[800] },
-  { label: "בית קפה", color: purple[800] },
+  { label: "בשרי", color: "#b71c1c" },
+  { label: "חלבי", color: "#0d47a1" },
+  { label: "אסייתי", color: "#1b5e20" },
+  { label: "מינימרקט", color: "#e65100" },
+  { label: "קינוחים", color: "#880e4f" },
+  { label: "בית קפה", color: "#4a148c" },
 ];
 
 export default function CreateRestaurant() {
   const { addRestaurant } = useRestaurant();
+  const { user } = useCurrentUser();
+  const countries = useCountries(); 
+
   const [formData, setFormData] = useState({
     name: "",
-    address: "",
+    country: "",
+    city: "",
+    street: "",
     description: "",
     tags: [],
     imageUrl: "",
+    openingHours: { from: "09:00", to: "22:00" }, 
   });
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+    if (name === "from" || name === "to") {
+      setFormData((prevData) => ({
+        ...prevData,
+        openingHours: { ...prevData.openingHours, [name]: value }
+      }));
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
+
 
   const handleTagChange = (tag) => {
     setFormData((prevData) => ({
@@ -46,15 +74,35 @@ export default function CreateRestaurant() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!user?._id) {
+      alert("You must be logged in to add a restaurant.");
+      return;
+    }
+
     const newRestaurant = {
       ...formData,
       rating: 0,
       status: "פתוח",
-      distance: "0 ק''מ",
       kosher: true,
+      user_id: user._id,
     };
-    await addRestaurant(newRestaurant); // Call the hook to add the restaurant
-    setFormData({ name: "", address: "", description: "", tags: [], imageUrl: "" }); // Reset form
+
+    try {
+      await addRestaurant(newRestaurant);
+      setFormData({
+        name: "",
+        country: "",
+        city: "",
+        street: "",
+        description: "",
+        tags: [],
+        imageUrl: "",
+        openingHours: { from: "08:00", to: "22:00" },
+      });
+    } catch (error) {
+      alert("Failed to add restaurant. " + error.message);
+    }
   };
 
   return (
@@ -69,13 +117,15 @@ export default function CreateRestaurant() {
         boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
         borderRadius: 2,
         backgroundColor: "#fff",
+        direction:"rtl"
       }}
     >
       <Typography variant="h4" textAlign="center" gutterBottom>
         הוסף מסעדה חדשה
       </Typography>
       <form onSubmit={handleSubmit}>
-        <TextField
+        <TextField sx={{ direction: "rtl" }}
+          direction="rtl"
           label="שם המסעדה"
           name="name"
           value={formData.name}
@@ -83,10 +133,32 @@ export default function CreateRestaurant() {
           fullWidth
           required
         />
+
+        
+        <FormControl fullWidth required>
+          <InputLabel>בחר מדינה</InputLabel>
+          <Select name="country" value={formData.country} onChange={handleInputChange}>
+            <MenuItem value="">הצג הכל</MenuItem>
+            {countries.map((country, index) => (
+              <MenuItem key={index} value={country.name}>
+                {country.name} ({country.englishName})
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
         <TextField
-          label="כתובת המסעדה"
-          name="address"
-          value={formData.address}
+          label="עיר"
+          name="city"
+          value={formData.city}
+          onChange={handleInputChange}
+          fullWidth
+          required
+        />
+        <TextField
+          label="רחוב ומספר"
+          name="street"
+          value={formData.street}
           onChange={handleInputChange}
           fullWidth
           required
@@ -97,7 +169,6 @@ export default function CreateRestaurant() {
           value={formData.description}
           onChange={handleInputChange}
           fullWidth
-          multiline
           required
         />
         <TextField
@@ -106,8 +177,34 @@ export default function CreateRestaurant() {
           value={formData.imageUrl}
           onChange={handleInputChange}
           fullWidth
-          required
+          
         />
+
+        
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <FormControl fullWidth>
+            <InputLabel>שעת פתיחה</InputLabel>
+            <Select name="from" value={formData.openingHours.from} onChange={handleInputChange}>
+              {Array.from({ length: 24 }, (_, i) => (
+                <MenuItem key={i} value={`${i.toString().padStart(2, "0")}:00`}>
+                  {`${i.toString().padStart(2, "0")}:00`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth>
+            <InputLabel>שעת סגירה</InputLabel>
+            <Select name="to" value={formData.openingHours.to} onChange={handleInputChange}>
+              {Array.from({ length: 24 }, (_, i) => (
+                <MenuItem key={i} value={`${i.toString().padStart(2, "0")}:00`}>
+                  {`${i.toString().padStart(2, "0")}:00`}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+
         <Typography variant="h6" gutterBottom>
           בחר תגיות:
         </Typography>
@@ -119,24 +216,15 @@ export default function CreateRestaurant() {
                 <Checkbox
                   checked={formData.tags.includes(label)}
                   onChange={() => handleTagChange(label)}
-                  sx={{
-                    color: color,
-                    "&.Mui-checked": { color: color },
-                  }}
+                  sx={{ color: color, "&.Mui-checked": { color: color } }}
                 />
               }
               label={<span style={{ fontSize: "1.2rem" }}>{label}</span>}
-              
             />
           ))}
         </FormGroup>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mt: 2 }}
-        >
+
+        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
           שמור מסעדה
         </Button>
       </form>

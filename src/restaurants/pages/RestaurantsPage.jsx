@@ -33,9 +33,10 @@ export default function RestaurantsPage() {
 
   const filteredByCountry = selectedCountry
     ? filteredRestaurants.filter((restaurant) =>
-      restaurant.address.includes(selectedCountry)
+      (restaurant.country || "").includes(selectedCountry)
     )
     : filteredRestaurants;
+
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -70,13 +71,18 @@ export default function RestaurantsPage() {
           <InputLabel>בחר מדינה</InputLabel>
           <Select value={selectedCountry} onChange={handleCountryChange}>
             <MenuItem value="">הצג הכל</MenuItem>
-            {countries.map((country, index) => (
-              <MenuItem key={index} value={country.name}>
-                {country.name} ({country.englishName})
-              </MenuItem>
-            ))}
+            {countries.length > 0 ? (
+              countries.map((country, index) => (
+                <MenuItem key={index} value={country.name}>
+                  {country.name} ({country.englishName})
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem disabled>לא נמצאו מדינות</MenuItem>
+            )}
           </Select>
         </FormControl>
+
       </Box>
 
       {/* Main Content - Cards & Sidebar */}
@@ -104,7 +110,14 @@ export default function RestaurantsPage() {
           }}
         >
           {filteredByCountry.map((restaurant, index) => (
-            <KosherRestaurantCard key={index} restaurant={restaurant} />
+            <KosherRestaurantCard
+              key={index}
+              restaurant={{
+                ...restaurant,
+                address: `${restaurant.street}, ${restaurant.city}, ${restaurant.country}` // Reconstruct address
+              }}
+            />
+
           ))}
         </Box>
       </Box>

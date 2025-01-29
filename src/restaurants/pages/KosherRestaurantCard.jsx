@@ -4,12 +4,13 @@ import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import useRestaurant from "../hooks/useRestaurant"; // Ensure you import useRestaurant
+import useRestaurant from "../hooks/useRestaurant";
+import moment from "moment";
 
 const StyledCard = styled(Card)(({ theme }) => ({
     display: "flex",
@@ -24,7 +25,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     direction: "rtl",
     gap: theme.spacing(2),
     [theme.breakpoints.down("sm")]: {
-        flexDirection: "column", // Stack content on small screens
+        flexDirection: "column",
         textAlign: "center",
         alignItems: "center",
     },
@@ -36,7 +37,7 @@ const StyledImage = styled(Box)(({ theme }) => ({
     borderRadius: "8px",
     objectFit: "cover",
     [theme.breakpoints.down("sm")]: {
-        width: "100%", // Full width on small screens
+        width: "100%",
         height: "auto",
     },
 }));
@@ -50,11 +51,37 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 function KosherRestaurantCard({ restaurant }) {
-    const { toggleLike } = useRestaurant(); // Get toggleLike from the custom hook
+    const { toggleLike } = useRestaurant();
 
     const handleLikeClick = () => {
-        toggleLike(restaurant._id); // Pass restaurant ID to toggleLike
+        toggleLike(restaurant._id);
     };
+
+    const handleNavigateClick = () => {
+        if (!restaurant.street || !restaurant.city || !restaurant.country) {
+            alert("כתובת המסעדה אינה זמינה");
+            return;
+        }
+
+        const address = `${restaurant.street}, ${restaurant.city}, ${restaurant.country}`;
+        const encodedAddress = encodeURIComponent(address);
+
+        const wazeUrl = `https://waze.com/ul?q=${encodedAddress}&navigate=yes`;
+        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        if (isMobile) {
+            window.open(wazeUrl, "_blank");
+        } else {
+            window.open(googleMapsUrl, "_blank");
+        }
+    };
+
+    // ✅ Display Opening Hours Correctly
+    const openingHoursText = restaurant.openingHours
+        ? `${restaurant.openingHours.from} - ${restaurant.openingHours.to}`
+        : "שעות פתיחה אינן זמינות";
 
     return (
         <StyledCard>
@@ -65,36 +92,29 @@ function KosherRestaurantCard({ restaurant }) {
                     <Typography variant="h5" fontWeight="bold">
                         {restaurant.name}
                     </Typography>
-                    <Chip
-                        label={restaurant.rating}
-                        color="primary"
-                        avatar={<Avatar>{restaurant.name.charAt(0)}</Avatar>}
-                        sx={{ fontWeight: "bold", fontSize: "1rem" }}
-                    />
+                    <Chip label={restaurant.rating} color="primary" avatar={<Avatar>{restaurant.name.charAt(0)}</Avatar>} />
                 </Box>
 
                 <Typography variant="body2" color="text.secondary">
-                    {restaurant.address}
+                    {`${restaurant.street}, ${restaurant.city}, ${restaurant.country}`}
                 </Typography>
 
+                {/* ✅ Show Opening Hours */}
+                <Typography variant="body2" color="text.secondary" mb={1}>
+                    <strong>שעות פתיחה:</strong> {openingHoursText}
+                </Typography>
+
+                {/* ✅ Show Open/Closed Status */}
                 <Typography variant="body2" color={restaurant.status === "סגור" ? "error" : "success"} mb={2}>
                     {restaurant.status}
                 </Typography>
 
                 <Box display="flex" alignItems="center" justifyContent="center" flexWrap="wrap" mb={2} gap={1}>
-                    <Chip icon={<LocationOnIcon />} label={restaurant.distance} />
                     <Chip label={restaurant.kosher ? "כשר" : "לא כשר"} color={restaurant.kosher ? "success" : "warning"} />
                     {restaurant.tags.map((tag, index) => (
                         <Chip key={index} label={tag} />
                     ))}
-                    <FavoriteIcon
-                        sx={{
-                            color: restaurant.isLiked ? "red" : "gray",
-                            fontSize: "2rem",
-                            cursor: "pointer",
-                        }}
-                        onClick={handleLikeClick} // Call handleLikeClick on icon click
-                    />
+                    <FavoriteIcon sx={{ color: restaurant.isLiked ? "red" : "gray", fontSize: "2rem", cursor: "pointer" }} onClick={handleLikeClick} />
                 </Box>
 
                 <Typography variant="body2" color="text.secondary" mb={2}>
@@ -102,7 +122,7 @@ function KosherRestaurantCard({ restaurant }) {
                 </Typography>
 
                 <Box display="flex" justifyContent="center" gap={1}>
-                    <ActionButton variant="contained" color="primary">
+                    <ActionButton variant="contained" color="primary" onClick={handleNavigateClick}>
                         ניווט
                     </ActionButton>
                     <ActionButton variant="contained" color="info">
@@ -117,15 +137,20 @@ function KosherRestaurantCard({ restaurant }) {
 KosherRestaurantCard.propTypes = {
     restaurant: PropTypes.shape({
         name: PropTypes.string.isRequired,
-        address: PropTypes.string.isRequired,
+        country: PropTypes.string,
+        city: PropTypes.string,
+        street: PropTypes.string,
         rating: PropTypes.number.isRequired,
         status: PropTypes.string.isRequired,
-        distance: PropTypes.string.isRequired,
         kosher: PropTypes.bool.isRequired,
         tags: PropTypes.arrayOf(PropTypes.string).isRequired,
         description: PropTypes.string.isRequired,
         imageUrl: PropTypes.string.isRequired,
         isLiked: PropTypes.bool.isRequired,
+        openingHours: PropTypes.shape({
+            from: PropTypes.string,
+            to: PropTypes.string,
+        }),
     }).isRequired,
 };
 
