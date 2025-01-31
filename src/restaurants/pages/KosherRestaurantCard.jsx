@@ -52,17 +52,14 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 function KosherRestaurantCard({ restaurant }) {
-    const { toggleLike, reserveRestaurant } = useRestaurant();
+    const { toggleLike, reserveRestaurantForUser } = useRestaurant();
     const setSnack = useSnack();
-    const handleReservationClick = async () => {
-        try {
-            await reserveRestaurant(restaurant._id);
-            setSnack("success", "הזמנתך נשמרה בהצלחה!");
-        } catch (error) {
-            console.error("Error reserving table:", error);
-            setSnack("error", "שגיאה בעת שמירת הזמנה. נסה שוב.");
-        }
+    const handleReservationClick = () => {
+        reserveRestaurantForUser(restaurant._id);
     };
+
+
+
 
 
     const handleLikeClick = () => {

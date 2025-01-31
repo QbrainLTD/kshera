@@ -13,7 +13,9 @@ import {
     createRestaurant,
     editRestaurant,
     changeLikeStatus,
+    reserveRestaurant as reserveApiCall
 } from "../services/RestaurantsApiService";
+import { reserveRestaurant } from "../../users/services/usersApiService"
 import axios from "axios";
 
 export default function useRestaurant() {
@@ -189,8 +191,8 @@ export default function useRestaurant() {
 
     const fetchUserReservations = useCallback(async (userId) => {
         try {
-            const response = await axios.get(`/restaurant/${userId}/reservations`);
-            return response.data || []; // Ensure it returns an array
+            const response = await axios.get(`/users/${userId}/reservations`);
+            return response.data || []; // ✅ Ensure it returns an array
         } catch (error) {
             console.error("Error fetching reservations:", error);
             return []; // Return an empty array on error
@@ -200,26 +202,29 @@ export default function useRestaurant() {
 
 
 
-    const reserveRestaurant = useCallback(async (restaurantId) => {
+    const reserveRestaurantForUser = useCallback(async (restaurantId) => {
         if (!user?._id) {
-            setSnack("error", "You must be logged in to reserve a table.");
+            setSnack("error", "אתה חייב להתחבר כדי לבצע הזמנה.");
             return;
         }
 
-        setIsLoading(true);
-        try {
-            const response = await axios.post(`/api/restaurants/${restaurantId}/reserve`);
+        console.log(`🔵 Reserving for user ${user._id} at restaurant ${restaurantId}`);
 
-            // ✅ Update UI
-            setReservations([...reservations, response.data.restaurant]);
-            setSnack("success", "המסעדה נוספה בהצלחה להזמנות שלך!");
+        try {
+            const response = await reserveRestaurant(user._id, restaurantId);
+            console.log("✅ Reservation successful:", response);
+
+            setUser(response);
+            setReservations([...reservations, response.newReservation]);
+            setSnack("success", "הזמנתך נשמרה בהצלחה!");
         } catch (err) {
-            setError(err.message || "Failed to reserve restaurant");
-            setSnack("error", err.message || "Failed to reserve restaurant");
-        } finally {
-            setIsLoading(false);
+            console.error("❌ Reservation failed:", err.response?.data || err.message);
+            setSnack("error", "שגיאה בעת שמירת הזמנה. נסה שוב.");
         }
-    }, [setSnack, user, reservations]);
+    }, [setSnack, user, reservations, setUser]);
+
+
+
 
 
 
@@ -240,7 +245,7 @@ export default function useRestaurant() {
         deleteRestaurantById,
         toggleLike,
         handleFilterTags,
-        reserveRestaurant, 
+        reserveRestaurantForUser, 
         fetchUserReservations, 
     };
 }

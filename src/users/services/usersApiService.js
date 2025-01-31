@@ -31,3 +31,22 @@ export const getUserData = async () => {
     return Promise.reject(error.message);
   }
 };
+
+export const reserveRestaurant = async (userId, restaurantId) => {
+  try {
+    const token = localStorage.getItem("my token"); // Ensure authentication
+    const response = await axios.post(
+      `${apiUrl}/${userId}/reserve`,  // ✅ Corrected URL
+      { restaurantId },
+      {
+        headers: {
+          "x-auth-token": token,  // ✅ Ensure user authentication
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error reserving restaurant:", error);
+    throw error;
+  }
+};
