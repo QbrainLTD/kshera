@@ -15,6 +15,7 @@ const mapRestaurantToModel = (restaurant) => {
       to: restaurant.openingHours?.to || "00:00",
     },
     isLiked: restaurant.isLiked || false,
+    user_id: restaurant.user_id,
   };
 };
 

@@ -11,6 +11,7 @@ import Avatar from "@mui/material/Avatar";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import useRestaurant from "../hooks/useRestaurant";
 import moment from "moment";
+import { useSnack } from "../../providers/SnackbarProvider";
 
 const StyledCard = styled(Card)(({ theme }) => ({
     display: "flex",
@@ -51,7 +52,18 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 function KosherRestaurantCard({ restaurant }) {
-    const { toggleLike } = useRestaurant();
+    const { toggleLike, reserveRestaurant } = useRestaurant();
+    const setSnack = useSnack();
+    const handleReservationClick = async () => {
+        try {
+            await reserveRestaurant(restaurant._id);
+            setSnack("success", "הזמנתך נשמרה בהצלחה!");
+        } catch (error) {
+            console.error("Error reserving table:", error);
+            setSnack("error", "שגיאה בעת שמירת הזמנה. נסה שוב.");
+        }
+    };
+
 
     const handleLikeClick = () => {
         toggleLike(restaurant._id);
@@ -125,9 +137,10 @@ function KosherRestaurantCard({ restaurant }) {
                     <ActionButton variant="contained" color="primary" onClick={handleNavigateClick}>
                         ניווט
                     </ActionButton>
-                    <ActionButton variant="contained" color="info">
+                    <ActionButton variant="contained" color="info" onClick={handleReservationClick}>
                         הזמנת שולחן
                     </ActionButton>
+
                 </Box>
             </Box>
         </StyledCard>

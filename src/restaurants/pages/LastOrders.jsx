@@ -1,70 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Grid, Card, CardMedia, CardContent, Typography, Box, Button } from "@mui/material";
-
-const lastOrders = [
-  {
-    id: 1,
-    name: "La Marina",
-    address: "1st Avenue, New York",
-    image: "https://s3-media0.fl.yelpcdn.com/bphoto/nJ7id8rj0Z6PbiWNWuLBPw/348s.jpg", // Replace with actual image URLs
-    orderDate: "2024-12-31",
-    rating: 4.5,
-  },
-  {
-    id: 2,
-    name: "Meat & Wine",
-    address: "12 Street, London",
-    image: "https://s3-media0.fl.yelpcdn.com/bphoto/nJ7id8rj0Z6PbiWNWuLBPw/348s.jpg",
-    orderDate: "2024-12-29",
-    rating: 4.8,
-  },
-  {
-    id: 3,
-    name: "The Vegan Bistro",
-    address: "Main St, San Francisco",
-    image: "https://s3-media0.fl.yelpcdn.com/bphoto/nJ7id8rj0Z6PbiWNWuLBPw/348s.jpg",
-    orderDate: "2024-12-28",
-    rating: 4.2,
-  },
-];
+import useRestaurant from "../hooks/useRestaurant"; // ✅ Import the hook
+import { useCurrentUser } from "../../users/providers/UserProvider"; // ✅ Get user context
 
 export default function LastOrders() {
+  const { fetchUserReservations } = useRestaurant(); // ✅ Fetch reservations
+  const { user } = useCurrentUser(); // ✅ Get current user
+  const [lastOrders, setLastOrders] = useState([]);
+
+  useEffect(() => {
+    if (user?._id) {
+      fetchUserReservations(user._id).then((data) => {
+        setLastOrders(Array.isArray(data) ? data : []); // ✅ Ensure lastOrders is an array
+      });
+    }
+  }, [user, fetchUserReservations]);
+
+  if (!Array.isArray(lastOrders) || lastOrders.length === 0) {
+    return (
+      <Box sx={{ padding: 4, textAlign: "center" }}>
+        <Typography variant="h6">לא נמצאו הזמנות אחרונות</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ padding: 4 }}>
       <Typography variant="h4" gutterBottom>
-        Last Orders
+        הזמנות אחרונות
       </Typography>
       <Grid container spacing={3}>
         {lastOrders.map((restaurant) => (
-          <Grid item xs={12} sm={6} md={4} key={restaurant.id}>
+          <Grid item xs={12} sm={6} md={4} key={restaurant._id}>
             <Card>
               <CardMedia
                 component="img"
                 height="150"
-                image={restaurant.image}
+                image={restaurant.imageUrl}
                 alt={restaurant.name}
               />
               <CardContent>
                 <Typography variant="h6">{restaurant.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {restaurant.address}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Ordered on: {restaurant.orderDate}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Rating: {restaurant.rating} ⭐
+                  {`${restaurant.street}, ${restaurant.city}, ${restaurant.country}`}
                 </Typography>
                 <Box mt={2}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{ marginRight: 1 }}
-                  >
-                    Reorder
+                  <Button variant="contained" size="small" sx={{ marginRight: 1 }}>
+                    בצע הזמנה חוזרת
                   </Button>
                   <Button variant="outlined" size="small" color="secondary">
-                    View Details
+                    הצג פרטים
                   </Button>
                 </Box>
               </CardContent>

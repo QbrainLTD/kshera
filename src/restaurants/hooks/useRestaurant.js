@@ -14,6 +14,7 @@ import {
     editRestaurant,
     changeLikeStatus,
 } from "../services/RestaurantsApiService";
+import axios from "axios";
 
 export default function useRestaurant() {
     const [restaurants, setRestaurants] = useState([]); // All restaurants
@@ -23,7 +24,8 @@ export default function useRestaurant() {
     const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Filtered restaurants
     const [favoriteRestaurants, setFavoriteRestaurants] = useState([]); // Favorite restaurants
     const [searchParams] = useSearchParams(); // For search query
-    const { user } = useCurrentUser(); // Current user context
+    const [reservations, setReservations] = useState([]);
+    const { user, setUser } = useCurrentUser(); // Current user context
     const setSnack = useSnack(); // Snackbar for notifications
     const navigate = useNavigate();
     useAxios();
@@ -185,6 +187,44 @@ export default function useRestaurant() {
         );
     };
 
+    const fetchUserReservations = useCallback(async (userId) => {
+        try {
+            const response = await axios.get(`/restaurant/${userId}/reservations`);
+            return response.data || []; // Ensure it returns an array
+        } catch (error) {
+            console.error("Error fetching reservations:", error);
+            return []; // Return an empty array on error
+        }
+    }, []);
+
+
+
+
+    const reserveRestaurant = useCallback(async (restaurantId) => {
+        if (!user?._id) {
+            setSnack("error", "You must be logged in to reserve a table.");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const response = await axios.post(`/api/restaurants/${restaurantId}/reserve`);
+
+            // ✅ Update UI
+            setReservations([...reservations, response.data.restaurant]);
+            setSnack("success", "המסעדה נוספה בהצלחה להזמנות שלך!");
+        } catch (err) {
+            setError(err.message || "Failed to reserve restaurant");
+            setSnack("error", err.message || "Failed to reserve restaurant");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [setSnack, user, reservations]);
+
+
+
+
+
     return {
         restaurants,
         restaurant,
@@ -200,5 +240,7 @@ export default function useRestaurant() {
         deleteRestaurantById,
         toggleLike,
         handleFilterTags,
+        reserveRestaurant, 
+        fetchUserReservations, 
     };
 }
