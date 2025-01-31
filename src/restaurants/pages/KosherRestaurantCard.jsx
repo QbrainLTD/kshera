@@ -52,10 +52,10 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 function KosherRestaurantCard({ restaurant }) {
-    const { toggleLike, reserveRestaurantForUser } = useRestaurant();
+    const { toggleLike, reserveRestaurant } = useRestaurant();
     const setSnack = useSnack();
     const handleReservationClick = () => {
-        reserveRestaurantForUser(restaurant._id);
+        reserveRestaurant(restaurant._id);
     };
 
 

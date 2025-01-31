@@ -191,37 +191,63 @@ export default function useRestaurant() {
 
     const fetchUserReservations = useCallback(async (userId) => {
         try {
+            console.log(`🔵 Fetching reservations for user: ${userId}`);
             const response = await axios.get(`/users/${userId}/reservations`);
-            return response.data || []; // ✅ Ensure it returns an array
+
+            if (!response.data || response.data.length === 0) {
+                console.warn("⚠️ No reservations found.");
+            } else {
+                console.log("✅ Reservations fetched:", response.data);
+            }
+
+            return response.data || [];  // Ensure it always returns an array
         } catch (error) {
-            console.error("Error fetching reservations:", error);
-            return []; // Return an empty array on error
+            console.error("❌ Error fetching reservations:", error);
+            return [];
         }
     }, []);
 
 
 
 
-    const reserveRestaurantForUser = useCallback(async (restaurantId) => {
+
+    const reserveRestaurant = useCallback(async (restaurantId) => {
         if (!user?._id) {
             setSnack("error", "אתה חייב להתחבר כדי לבצע הזמנה.");
             return;
         }
 
-        console.log(`🔵 Reserving for user ${user._id} at restaurant ${restaurantId}`);
+        setIsLoading(true);
+        console.log(`📌 Sending reservation request for restaurant: ${restaurantId}`);
 
         try {
-            const response = await reserveRestaurant(user._id, restaurantId);
-            console.log("✅ Reservation successful:", response);
+            const response = await axios.post(`/users/${user._id}/reserve`, { restaurantId });
 
-            setUser(response);
-            setReservations([...reservations, response.newReservation]);
-            setSnack("success", "הזמנתך נשמרה בהצלחה!");
+            console.log("✅ Reservation Successful:", response.data);
+
+            setUser(response.data);
+            setReservations([...reservations, response.data.newReservation]);
+            setSnack("success", "המסעדה נוספה בהצלחה להזמנות שלך!");
         } catch (err) {
-            console.error("❌ Reservation failed:", err.response?.data || err.message);
+            console.error("❌ Error reserving restaurant:", err);
+
+            if (err.response) {
+                console.error("🔴 Error Response Data:", err.response.data);
+                console.error("🔴 Error Response Status:", err.response.status);
+                console.error("🔴 Error Response Headers:", err.response.headers);
+            } else if (err.request) {
+                console.error("🔴 No response received:", err.request);
+            } else {
+                console.error("🔴 Error setting up request:", err.message);
+            }
+
             setSnack("error", "שגיאה בעת שמירת הזמנה. נסה שוב.");
+        } finally {
+            setIsLoading(false);
         }
     }, [setSnack, user, reservations, setUser]);
+
+
 
 
 
@@ -245,7 +271,7 @@ export default function useRestaurant() {
         deleteRestaurantById,
         toggleLike,
         handleFilterTags,
-        reserveRestaurantForUser, 
+        reserveRestaurant, 
         fetchUserReservations, 
     };
 }

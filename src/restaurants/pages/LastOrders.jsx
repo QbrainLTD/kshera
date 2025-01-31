@@ -24,7 +24,7 @@ export default function LastOrders() {
       <Grid container spacing={3}>
         {lastOrders.length > 0 ? (
           lastOrders.map((restaurant) => (
-            <Grid item xs={12} sm={6} md={4} key={restaurant._id}>
+            <Grid item xs={12} sm={6} md={4} key={restaurant._id || restaurant.id}>
               <Card>
                 <CardMedia
                   component="img"
@@ -55,6 +55,7 @@ export default function LastOrders() {
           </Typography>
         )}
       </Grid>
+
     </Box>
   );
 }
