@@ -127,11 +127,36 @@ export const reserveRestaurant = async (userId, restaurantId) => {
 
 
 
-export const changeLikeStatus = async (RestaurantId) => {
+export const changeLikeStatus = async (restaurantId) => {
   try {
-    const { data } = await axios.patch(`${apiUrl}/${RestaurantId}`);
-    return data;  
+    const { data } = await axios.patch(`${apiUrl}/${restaurantId}`);
+    return data;
   } catch (error) {
+    return Promise.reject(error.message);
+  }
+};
+
+
+export const cancelReservation = async (userId, restaurantId) => {
+  try {
+    const token = localStorage.getItem("my token"); // ✅ Get JWT token
+
+    if (!token) {
+      throw new Error("Authentication Error: Token is missing");
+    }
+
+    const response = await axios.delete(
+      `http://localhost:5000/users/${userId}/reservations/${restaurantId}`,  // ✅ Correct DELETE API call
+      {
+        headers: {
+          "x-auth-token": token, // ✅ Send authentication token
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error canceling reservation:", error.message);
     return Promise.reject(error.message);
   }
 };

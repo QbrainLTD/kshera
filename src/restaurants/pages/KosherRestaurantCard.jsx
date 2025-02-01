@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
@@ -8,7 +8,8 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import IconButton from "@mui/material/IconButton";
+import { useCurrentUser } from "../../users/providers/UserProvider";
 import useRestaurant from "../hooks/useRestaurant";
 import moment from "moment";
 import { useSnack } from "../../providers/SnackbarProvider";
@@ -52,18 +53,31 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 function KosherRestaurantCard({ restaurant }) {
-    const { toggleLike, reserveRestaurant } = useRestaurant();
+    const { handleLike, reserveRestaurant } = useRestaurant();
+    const { user } = useCurrentUser();
+    const [liked, setLiked] = useState(restaurant.isLiked);
     const setSnack = useSnack();
     const handleReservationClick = () => {
         reserveRestaurant(restaurant._id);
     };
 
+    useEffect(() => {
+        setLiked(restaurant.isLiked); // ✅ Ensure sync with backend updates
+    }, [restaurant.isLiked]);
 
+    const handleLikeToggle = async () => {
+        if (!user?._id) {
+            setSnack("error", "עליך להתחבר כדי לאהוב מסעדה.");
+            return;
+        }
 
-
-
-    const handleLikeClick = () => {
-        toggleLike(restaurant._id);
+        try {
+            await handleLike(restaurant._id); // ✅ Call the API to update like status
+            setLiked((prevLiked) => !prevLiked); // ✅ Toggle local state for instant UI update
+        } catch (error) {
+            console.error("❌ Error toggling like:", error);
+            setSnack("error", "שגיאה בעת שינוי סטטוס אהבתי.");
+        }
     };
 
     const handleNavigateClick = () => {
@@ -123,7 +137,11 @@ function KosherRestaurantCard({ restaurant }) {
                     {restaurant.tags.map((tag, index) => (
                         <Chip key={index} label={tag} />
                     ))}
-                    <FavoriteIcon sx={{ color: restaurant.isLiked ? "red" : "gray", fontSize: "2rem", cursor: "pointer" }} onClick={handleLikeClick} />
+                    {user && ( // ✅ Show like button only for logged-in users
+                        <IconButton onClick={handleLikeToggle}>
+                            <FavoriteIcon sx={{ color: liked ? "red" : "gray" }} />
+                        </IconButton>
+                    )}
                 </Box>
 
                 <Typography variant="body2" color="text.secondary" mb={2}>

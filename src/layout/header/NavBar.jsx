@@ -17,7 +17,7 @@ export default function IconLabelTabs() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    // Navigate to the new route when the tab changes
+    
     if (newValue === 3) navigate(ROUTES.LAST_ORDERS);
     if (newValue === 2) navigate(ROUTES.FAV_REST);
     if (newValue === 0) navigate(ROUTES.ROOT);

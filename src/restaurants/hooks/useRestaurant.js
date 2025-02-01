@@ -13,7 +13,9 @@ import {
     createRestaurant,
     editRestaurant,
     changeLikeStatus,
-    reserveRestaurant as reserveApiCall
+    reserveRestaurant as reserveApiCall,
+    cancelReservation  
+   
 } from "../services/RestaurantsApiService";
 import { reserveRestaurant } from "../../users/services/usersApiService"
 import axios from "axios";
@@ -131,38 +133,58 @@ export default function useRestaurant() {
         }
     }, [setSnack]);
 
-    // Like/unlike a restaurant
-    const toggleLike = useCallback(
-        async (id) => {
+    const handleLike = useCallback(async (restaurantId) => {
+        try {
+            const updatedRestaurant = await changeLikeStatus(restaurantId);
+
+            // ✅ Update restaurants list
+            setRestaurants((prev) =>
+                prev.map((r) => (r._id === restaurantId ? updatedRestaurant : r))
+            );
+
+            // ✅ Update favorite restaurants
+            setFavoriteRestaurants((prev) => {
+                if (updatedRestaurant.isLiked) {
+                    return [...prev, updatedRestaurant];
+                } else {
+                    return prev.filter((r) => r._id !== restaurantId);
+                }
+            });
+
+            setSnack("success", "עודכנה אהבתך למסעדה!");
+        } catch (error) {
+            console.error("❌ Error updating like status:", error);
+            setSnack("error", "שגיאה בעת עדכון אהבתך למסעדה.");
+        }
+    }, [setRestaurants, setFavoriteRestaurants, setSnack]);
+
+
+
+    const handleFavRestaurants = useCallback(async () => {
+        try {
             setIsLoading(true);
-            try {
-                const data = await changeLikeStatus(id);
+            const allRestaurants = await getRestaurants(); // ✅ Fetch all restaurants
+            console.log("All Restaurants:", allRestaurants);
 
-                // Update the restaurants state
-                setRestaurants((prev) =>
-                    prev.map((restaurant) =>
-                        restaurant._id === id ? { ...restaurant, ...data } : restaurant
-                    )
-                );
+            if (user && user._id) {
+                const favData = allRestaurants.filter(restaurant => restaurant.isLiked);
+                console.log("Favorite Restaurants:", favData);
 
-                // Update the favoriteRestaurants state
-                setFavoriteRestaurants((prev) =>
-                    data.isLiked
-                        ? [...prev, { ...data }] // Add to favorites
-                        : prev.filter((fav) => fav._id !== id) // Remove from favorites
-                );
-
-                setSnack("success", `Restaurant ${data.isLiked ? "liked" : "unliked"}!`);
-            } catch (err) {
-                setError(err.message || "Failed to update like status");
-                setSnack("error", err.message || "Failed to update like status");
-            } finally {
-                setIsLoading(false);
+                setFavoriteRestaurants(favData); // ✅ Update state
+            } else {
+                throw new Error('User not authenticated');
             }
-        },
-        [setSnack]
-    );
-    
+        } catch (error) {
+            setIsLoading(false);
+            setError(error.message);
+            console.error("Error fetching favorite restaurants:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [getRestaurants, user, setFavoriteRestaurants]); // ✅ Removed `restaurants` from dependencies to avoid stale data
+
+
+
 
     // Filter restaurants based on query
     useEffect(() => {
@@ -208,9 +230,6 @@ export default function useRestaurant() {
     }, []);
 
 
-
-
-
     const reserveRestaurant = useCallback(async (restaurantId) => {
         if (!user?._id) {
             setSnack("error", "אתה חייב להתחבר כדי לבצע הזמנה.");
@@ -248,8 +267,27 @@ export default function useRestaurant() {
     }, [setSnack, user, reservations, setUser]);
 
 
+    const handleCancelReservation = useCallback(async (restaurantId) => {
+        if (!restaurantId || !user?._id) {
+            console.error("❌ Error: Missing restaurant ID or user ID.");
+            return;
+        }
 
+        console.log(`🛑 Canceling reservation for restaurant ID: ${restaurantId}`);
 
+        try {
+            await cancelReservation(user._id, restaurantId);
+
+            // ✅ Re-fetch user reservations after cancellation
+            const updatedReservations = await fetchUserReservations(user._id);
+            setReservations(updatedReservations);
+
+            setSnack("success", "הזמנה בוטלה בהצלחה!");
+        } catch (error) {
+            console.error("❌ Error canceling reservation:", error);
+            setSnack("error", "שגיאה בעת ביטול הזמנה. נסה שוב.");
+        }
+    }, [user, setSnack, fetchUserReservations]);
 
 
 
@@ -263,15 +301,18 @@ export default function useRestaurant() {
         favoriteRestaurants,
         isLoading,
         error,
+        reservations,
         fetchRestaurants,
         fetchMyRestaurants,
         fetchRestaurantById,
         addRestaurant,
         updateRestaurant,
         deleteRestaurantById,
-        toggleLike,
+        handleLike,
         handleFilterTags,
         reserveRestaurant, 
-        fetchUserReservations, 
+        fetchUserReservations,
+        handleFavRestaurants,
+        handleCancelReservation
     };
 }

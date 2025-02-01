@@ -1,26 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Box, Card, CardContent, CardMedia, Button } from "@mui/material";
-import useRestaurants  from "../hooks/useRestaurant";
+import useRestaurants from "../hooks/useRestaurant";
 
 export default function FavoriteRestaurants() {
-  const { restaurants, toggleLike } = useRestaurants(); // Access restaurants and toggleLike function
+  const { favoriteRestaurants, handleLike } = useRestaurants(); // ✅ Access liked restaurants and handleLike function
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    // Filter only liked restaurants and update the favorites state
-    const likedRestaurants = restaurants.filter((restaurant) => restaurant.isLiked);
-    setFavorites(likedRestaurants);
-  }, [restaurants]);
+    setFavorites(favoriteRestaurants);
+  }, [favoriteRestaurants]);
 
   const handleToggleLike = async (id) => {
-    // Call the toggleLike function, which will update the restaurants and favorites
-    await toggleLike(id);
+    await handleLike(id);
   };
 
   return (
     <Box sx={{ padding: 2 }}>
       <Typography variant="h4" gutterBottom>
-        My Favorite Restaurants
+        המסעדות האהובות עלי
       </Typography>
       {favorites.length > 0 ? (
         favorites.map((restaurant) => (
@@ -38,7 +35,7 @@ export default function FavoriteRestaurants() {
                   {restaurant.description}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Address: {restaurant.address}
+                  {restaurant.city}, {restaurant.country}
                 </Typography>
               </CardContent>
               <Box sx={{ marginLeft: 2, marginBottom: 1 }}>
@@ -47,7 +44,7 @@ export default function FavoriteRestaurants() {
                   color={restaurant.isLiked ? "error" : "primary"}
                   onClick={() => handleToggleLike(restaurant._id)}
                 >
-                  {restaurant.isLiked ? "Unlike" : "Like"}
+                  {restaurant.isLiked ? "הסר אהוב" : "הוסף אהוב"}
                 </Button>
               </Box>
             </Box>
@@ -55,7 +52,7 @@ export default function FavoriteRestaurants() {
         ))
       ) : (
         <Typography variant="body1" color="text.secondary">
-          No favorite restaurants added yet.
+          אין מסעדות אהובות כרגע.
         </Typography>
       )}
     </Box>
