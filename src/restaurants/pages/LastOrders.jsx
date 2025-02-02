@@ -19,26 +19,29 @@ import { useCurrentUser } from "../../users/providers/UserProvider";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { useLocation } from "react-router-dom";
 
 export default function LastOrders() {
   const { fetchUserReservations, handleCancelReservation, reservations } = useRestaurant();
   const { user } = useCurrentUser();
   const [lastOrders, setLastOrders] = useState([]);
+  const location = useLocation();
 
+  // ✅ Auto-refresh last orders when navigating back to this page
   useEffect(() => {
     if (user?._id) {
       fetchUserReservations(user._id).then((data) => {
         setLastOrders(Array.isArray(data) ? data : []);
       });
     }
-  }, [user, fetchUserReservations, reservations]);
+  }, [user, fetchUserReservations, reservations, location.pathname]);
 
+  // ✅ Handle navigation to restaurant location
   const handleNavigate = (restaurant) => {
     const address = encodeURIComponent(`${restaurant.street}, ${restaurant.city}, ${restaurant.country}`);
     const wazeUrl = `https://waze.com/ul?q=${address}&navigate=yes`;
     const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${address}`;
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
     window.open(isMobile ? wazeUrl : googleMapsUrl, "_blank");
   };
 
@@ -64,7 +67,13 @@ export default function LastOrders() {
             </TableHead>
             <TableBody>
               {lastOrders.map((restaurant) => (
-                <TableRow key={restaurant._id || restaurant.id} sx={{ "&:hover": { backgroundColor: "#f9f9f9" } }}>
+                <TableRow
+                  key={restaurant._id || restaurant.id}
+                  sx={{
+                    "&:hover": { backgroundColor: "#f9f9f9" },
+                    transition: "background-color 0.2s ease-in-out",
+                  }}
+                >
                   {/* ✅ Image */}
                   <TableCell align="center">
                     <CardMedia
@@ -72,20 +81,27 @@ export default function LastOrders() {
                       height="80"
                       image={restaurant.imageUrl}
                       alt={restaurant.name}
-                      sx={{ borderRadius: "8px", width: "90px", objectFit: "cover" }}
+                      sx={{
+                        borderRadius: "8px",
+                        width: "90px",
+                        objectFit: "cover",
+                        boxShadow: "0px 2px 5px rgba(0,0,0,0.2)",
+                      }}
                     />
                   </TableCell>
 
                   {/* ✅ Restaurant Name */}
-                  <TableCell>
+                  <TableCell align="center">
                     <Typography variant="h6" sx={{ fontWeight: "bold", color: "#007BFF" }}>
                       {restaurant.name}
                     </Typography>
                   </TableCell>
 
                   {/* ✅ Address */}
-                  <TableCell>
-                    <Typography variant="body2">{`${restaurant.street}, ${restaurant.city}, ${restaurant.country}`}</Typography>
+                  <TableCell align="center">
+                    <Typography variant="body2">
+                      {`${restaurant.street}, ${restaurant.city}, ${restaurant.country}`}
+                    </Typography>
                   </TableCell>
 
                   {/* ✅ Opening Hours */}
@@ -127,7 +143,7 @@ export default function LastOrders() {
                       variant="contained"
                       color="primary"
                       size="small"
-                      sx={{ mx: 1, textTransform: "none" }}
+                      sx={{ mx: 1, textTransform: "none", borderRadius: "8px" }}
                       startIcon={<LocationOnIcon />}
                       onClick={() => handleNavigate(restaurant)}
                     >
@@ -138,7 +154,7 @@ export default function LastOrders() {
                       variant="outlined"
                       size="small"
                       color="error"
-                      sx={{ textTransform: "none" }}
+                      sx={{ textTransform: "none", borderRadius: "8px" }}
                       startIcon={<CancelIcon />}
                       onClick={() => handleCancelReservation(restaurant._id || restaurant.id)}
                     >

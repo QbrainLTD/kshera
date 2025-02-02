@@ -1,58 +1,49 @@
-import * as React from 'react';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import PhoneIcon from '@mui/icons-material/Phone';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import PersonPinIcon from '@mui/icons-material/PersonPin';
-import { Box } from '@mui/material';
-import ROUTES from '../../routes/routesModel';
-import { useNavigate } from "react-router-dom";
-import InfoIcon from '@mui/icons-material/Info';
-import { useCurrentUser } from '../../users/providers/UserProvider';
+import React, { useEffect, useState } from "react";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import PhoneIcon from "@mui/icons-material/Phone";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import PersonPinIcon from "@mui/icons-material/PersonPin";
+import { Box } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
+import { useNavigate, useLocation } from "react-router-dom";
+import ROUTES from "../../routes/routesModel";
+import { useCurrentUser } from "../../users/providers/UserProvider";
 
 export default function IconLabelTabs() {
-  const [value, setValue] = React.useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useCurrentUser();
 
+  // ✅ Define available tabs dynamically based on user login status
+  const tabs = [
+    { label: "קרוב אליי", icon: <PersonPinIcon sx={{ color: "#607d8b", fontSize: "2rem" }} />, route: ROUTES.ROOT },
+    { label: "אודות", icon: <InfoIcon sx={{ color: "#f50057", fontSize: "2rem" }} />, route: ROUTES.ABOUT_PAGE },
+    ...(user ? [
+      { label: "אהבתי", icon: <FavoriteIcon sx={{ color: "red", fontSize: "2rem" }} />, route: ROUTES.FAV_REST },
+      { label: "הזמנות אחרונות", icon: <PhoneIcon sx={{ color: "#00e676", fontSize: "2rem" }} />, route: ROUTES.LAST_ORDERS }
+    ] : [])
+  ];
+
+  // ✅ Ensure current tab index is always valid
+  const currentTab = Math.max(tabs.findIndex(tab => tab.route === location.pathname), 0);
+
+  useEffect(() => {
+    if (currentTab === -1) {
+      navigate(ROUTES.ROOT); // Redirect to home if no valid tab is found
+    }
+  }, [currentTab, navigate]);
+
   const handleChange = (event, newValue) => {
-    setValue(newValue);
-    
-    if (newValue === 3) navigate(ROUTES.LAST_ORDERS);
-    if (newValue === 2) navigate(ROUTES.FAV_REST);
-    if (newValue === 0) navigate(ROUTES.ROOT);
-    if (newValue === 1) navigate(ROUTES.ABOUT_PAGE);
+    navigate(tabs[newValue].route);
   };
 
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      padding="2vh"
-    >
-      
-      <Tabs value={value} onChange={handleChange} aria-label="icon label tabs example">
-        <Tab
-          icon={<PersonPinIcon sx={{ color: '#607d8b', fontSize: "2rem" }} />}
-          label="קרוב אליי"
-        />
-        <Tab
-          icon={<InfoIcon sx={{ color: '#f50057', fontSize: "2rem" }} />}
-          label="אודות"
-        />
-       
-
-        {user ? <Tab
-          icon={<FavoriteIcon sx={{ color: 'red', fontSize: "2rem" }} />}
-          label="אהבתי"
-        /> : null}
-
-        {user ? <Tab
-          icon={<PhoneIcon sx={{ color: '#00e676', fontSize: "2rem" }} />}
-          label="הזמנות אחרונות"
-        /> : null}
-
+    <Box display="flex" justifyContent="center" alignItems="center" padding="2vh">
+      <Tabs value={currentTab} onChange={handleChange} aria-label="icon label tabs">
+        {tabs.map((tab, index) => (
+          <Tab key={index} icon={tab.icon} label={tab.label} />
+        ))}
       </Tabs>
     </Box>
   );

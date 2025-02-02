@@ -237,43 +237,44 @@ export default function useRestaurant() {
         }
 
         setIsLoading(true);
-        console.log(`📌 Sending reservation request for restaurant: ${restaurantId}`);
 
         try {
             const response = await axios.post(`/users/${user._id}/reserve`, { restaurantId });
 
-            console.log("✅ Reservation Successful:", response.data);
-
-            setUser(response.data);
-            setReservations([...reservations, response.data.newReservation]);
-            setSnack("success", "המסעדה נוספה בהצלחה להזמנות שלך!");
-        } catch (err) {
-            console.error("❌ Error reserving restaurant:", err);
-
-            if (err.response) {
-                console.error("🔴 Error Response Data:", err.response.data);
-                console.error("🔴 Error Response Status:", err.response.status);
-                console.error("🔴 Error Response Headers:", err.response.headers);
-            } else if (err.request) {
-                console.error("🔴 No response received:", err.request);
-            } else {
-                console.error("🔴 Error setting up request:", err.message);
+            if (!response.data || !response.data.user) {
+                throw new Error("Invalid server response. User data missing.");
             }
 
-            setSnack("error", "שגיאה בעת שמירת הזמנה. נסה שוב.");
+            const updatedUser = response.data.user;
+
+            // ✅ Save the correct user object to state and local storage
+            setUser(updatedUser);
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+
+            // ✅ Ensure new reservation is reflected in state
+            setReservations([...reservations, restaurantId]);
+
+            setSnack("success", "המסעדה נוספה בהצלחה להזמנות שלך!");
+        } catch (err) {
+            let errorMessage = "שגיאה בעת שמירת הזמנה. נסה שוב.";
+
+            if (err.response) {
+                errorMessage = `שגיאה: ${err.response.data?.message || "אירעה שגיאה"}`;
+            }
+
+            setSnack("error", errorMessage);
         } finally {
             setIsLoading(false);
         }
     }, [setSnack, user, reservations, setUser]);
 
 
+
     const handleCancelReservation = useCallback(async (restaurantId) => {
         if (!restaurantId || !user?._id) {
-            console.error("❌ Error: Missing restaurant ID or user ID.");
+            setSnack("error", "שגיאה: פרטי הזמנה חסרים.");
             return;
         }
-
-        console.log(`🛑 Canceling reservation for restaurant ID: ${restaurantId}`);
 
         try {
             await cancelReservation(user._id, restaurantId);
@@ -284,10 +285,16 @@ export default function useRestaurant() {
 
             setSnack("success", "הזמנה בוטלה בהצלחה!");
         } catch (error) {
-            console.error("❌ Error canceling reservation:", error);
-            setSnack("error", "שגיאה בעת ביטול הזמנה. נסה שוב.");
+            let errorMessage = "שגיאה בעת ביטול ההזמנה. נסה שוב.";
+
+            if (error.response) {
+                errorMessage = `שגיאה: ${error.response.data?.message || "אירעה שגיאה"}`;
+            }
+
+            setSnack("error", errorMessage);
         }
     }, [user, setSnack, fetchUserReservations]);
+
 
 
 
