@@ -5,7 +5,6 @@ import {
     CardContent,
     Typography,
     Avatar,
-    CircularProgress,
     Grid,
     Button,
     TextField,
@@ -35,7 +34,8 @@ export default function Profile() {
         street: "",
         city: "",
         country: "",
-        password: "",
+        phone: "",
+        imageUrl: "", // ✅ Add Image URL field
     });
 
     useEffect(() => {
@@ -57,7 +57,8 @@ export default function Profile() {
                     street: response.data?.address?.street || "",
                     city: response.data?.address?.city || "",
                     country: response.data?.address?.country || "",
-                    password: "",
+                    phone: response.data?.phone || "",
+                    imageUrl: response.data?.image?.url || "", // ✅ Set initial image URL
                 });
             } catch (err) {
                 console.error("❌ Error fetching user profile:", err);
@@ -71,50 +72,65 @@ export default function Profile() {
     }, [user]);
 
     const handleInputChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
-    const handleSaveChanges = async () => {
+    const handleSaveChanges = async (e) => {
+        e.preventDefault();
+
         try {
-            const updateData = { ...formData };
-
-            // 🟢 Prevent empty values from overwriting existing data
-            Object.keys(updateData).forEach(key => {
-                if (!updateData[key] || updateData[key] === "") {
-                    delete updateData[key];
-                }
-            });
-
-            // 🟢 Ensure `address` is correctly structured
-            if (updateData.address) {
-                updateData.address = {
-                    ...user.address, // Preserve existing address fields
-                    ...updateData.address, // Only update changed fields
-                };
+            if (!user?._id) {
+                setSnack({ open: true, message: "משתמש לא מזוהה, נסה להתחבר מחדש.", severity: "error" });
+                return;
             }
 
-            const response = await axios.put(`http://localhost:5000/users/${user._id}`, updateData);
+            const updateData = {
+                name: {
+                    first: formData.firstName,
+                    middle: formData.middleName,
+                    last: formData.lastName,
+                },
+                address: {
+                    country: formData.country,
+                    city: formData.city,
+                    street: formData.street,
+                },
+                phone: formData.phone,
+                email: formData.email,
+                image: {
+                    url: formData.imageUrl, // ✅ Update Image URL
+                    alt: `${formData.firstName} ${formData.lastName}`,
+                },
+            };
+
+            console.log("🔵 Sending update data:", updateData);
+
+            const response = await axios.put(
+                `http://localhost:5000/users/${user._id}`,
+                updateData
+            );
 
             console.log("✅ User updated successfully:", response.data);
 
-            // 🟢 Update frontend state
             setUser(response.data);
-            setExpanded(false); // Close accordion
-
-            setSnack({ open: true, message: "פרופיל עודכן בהצלחה!", severity: "success" });
+            setExpanded(false);
+            setSnack({ open: true, message: "הפרופיל עודכן בהצלחה!", severity: "success" });
         } catch (err) {
             console.error("❌ Error updating profile:", err);
             setSnack({ open: true, message: "שגיאה בעדכון הפרופיל. נסה שוב.", severity: "error" });
         }
     };
 
-
     return (
         <Box sx={{ maxWidth: 600, margin: "auto", padding: 3 }}>
             <Card sx={{ boxShadow: 3, borderRadius: 2, padding: 3 }}>
                 <CardContent sx={{ textAlign: "center" }}>
                     <Avatar
-                        src={typeof userData?.image === "string" ? userData.image : "/default-avatar.png"}
+                        src={formData.imageUrl || "/default-avatar.png"}
                         alt="User Avatar"
                         sx={{ width: 100, height: 100, margin: "auto", marginBottom: 2 }}
                     />
@@ -130,10 +146,6 @@ export default function Profile() {
                     <Typography variant="body1" color="text.secondary" sx={{ marginTop: 1 }}>
                         📍 {userData?.address?.street || "רחוב לא צויין"}, {userData?.address?.city || "עיר לא צויינה"},
                         {userData?.address?.country || "מדינה לא צויינה"}
-                    </Typography>
-
-                    <Typography variant="body1" color={userData?.isAdmin ? "success.main" : "primary.main"} sx={{ marginTop: 2 }}>
-                        {userData?.isAdmin ? "🛠️ מנהל מערכת" : "👤 משתמש רגיל"}
                     </Typography>
 
                     <Grid container justifyContent="center" sx={{ marginTop: 3 }}>
@@ -170,7 +182,7 @@ export default function Profile() {
                                     <TextField fullWidth label="מדינה" name="country" value={formData.country} onChange={handleInputChange} />
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <TextField fullWidth label="סיסמה חדשה" type="password" name="password" value={formData.password} onChange={handleInputChange} />
+                                    <TextField fullWidth label="כתובת תמונת פרופיל" name="imageUrl" value={formData.imageUrl} onChange={handleInputChange} />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Button fullWidth variant="contained" color="success" onClick={handleSaveChanges}>
