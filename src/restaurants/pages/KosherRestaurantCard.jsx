@@ -62,8 +62,9 @@ function KosherRestaurantCard({ restaurant }) {
     };
 
     useEffect(() => {
-        setLiked(restaurant.isLiked); // ✅ Ensure state syncs with backend updates
-    }, [restaurant.isLiked]);
+        setLiked(restaurant.likes.includes(user?._id)); // ✅ Check user ID in likes array
+    }, [restaurant.likes, user]);
+
 
     const handleLikeToggle = async () => {
         if (!user?._id) {
@@ -73,10 +74,14 @@ function KosherRestaurantCard({ restaurant }) {
 
         try {
             await handleLike(restaurant._id);
+
+            // ✅ Toggle local state after API call
+            setLiked((prevLiked) => !prevLiked);
         } catch (error) {
             setSnack("error", "שגיאה בעת שינוי סטטוס אהבתי.");
         }
     };
+
 
 
     const handleNavigateClick = () => {
@@ -136,10 +141,11 @@ function KosherRestaurantCard({ restaurant }) {
                     {restaurant.tags.map((tag, index) => (
                         <Chip key={index} label={tag} />
                     ))}
-                    {user && ( // ✅ Show like button only for logged-in users
+                    {user && ( 
                         <IconButton onClick={handleLikeToggle}>
                             <FavoriteIcon sx={{ color: liked ? "red" : "gray" }} />
                         </IconButton>
+
                     )}
                 </Box>
 
