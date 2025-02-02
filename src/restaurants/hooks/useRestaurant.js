@@ -135,19 +135,20 @@ export default function useRestaurant() {
 
     const handleLike = useCallback(async (restaurantId) => {
         try {
-            const updatedRestaurant = await changeLikeStatus(restaurantId);
+            const updatedRestaurant = await changeLikeStatus(restaurantId, user._id); // Ensure userId is sent
 
             // ✅ Update restaurants list
             setRestaurants((prev) =>
                 prev.map((r) => (r._id === restaurantId ? updatedRestaurant : r))
             );
 
-            // ✅ Update favorite restaurants
+            // ✅ Recalculate Favorite Restaurants
             setFavoriteRestaurants((prev) => {
-                if (updatedRestaurant.isLiked) {
-                    return [...prev, updatedRestaurant];
+                const isLiked = updatedRestaurant.likes.includes(user._id); // Check if user still likes it
+                if (isLiked) {
+                    return [...prev, updatedRestaurant]; // Add to favorites
                 } else {
-                    return prev.filter((r) => r._id !== restaurantId);
+                    return prev.filter((r) => r._id !== restaurantId); // Remove from favorites
                 }
             });
 
@@ -156,23 +157,37 @@ export default function useRestaurant() {
             console.error("❌ Error updating like status:", error);
             setSnack("error", "שגיאה בעת עדכון אהבתך למסעדה.");
         }
-    }, [setRestaurants, setFavoriteRestaurants, setSnack]);
+    }, [setRestaurants, setFavoriteRestaurants, setSnack, user]);
+
+
+
+
+
+
+
+
 
 
 
     const handleFavRestaurants = useCallback(async () => {
         try {
             setIsLoading(true);
-            const allRestaurants = await getRestaurants(); // ✅ Fetch all restaurants
-            console.log("All Restaurants:", allRestaurants);
+            const allRestaurants = await getRestaurants();
+            console.log("All Restaurants:", allRestaurants); // ✅ Log all restaurants
 
             if (user && user._id) {
-                const favData = allRestaurants.filter(restaurant => restaurant.isLiked);
-                console.log("Favorite Restaurants:", favData);
+                const favData = allRestaurants
+                    .filter((restaurant) => restaurant.likes.includes(user._id))
+                    .map((restaurant) => ({
+                        ...restaurant,
+                        _id: restaurant._id || restaurant.id || null, // ✅ Ensure `_id` exists
+                    }));
 
-                setFavoriteRestaurants(favData); // ✅ Update state
+                console.log("🛠 Filtered Favorite Restaurants:", favData); // ✅ Log filtered data
+
+                setFavoriteRestaurants(favData);
             } else {
-                throw new Error('User not authenticated');
+                throw new Error("User not authenticated");
             }
         } catch (error) {
             setIsLoading(false);
@@ -181,7 +196,29 @@ export default function useRestaurant() {
         } finally {
             setIsLoading(false);
         }
-    }, [getRestaurants, user, setFavoriteRestaurants]); // ✅ Removed `restaurants` from dependencies to avoid stale data
+    }, [getRestaurants, user, setFavoriteRestaurants]);
+
+
+
+
+    const fetchFavoriteRestaurants = useCallback(async () => {
+        try {
+            if (!user || !user._id) {
+                setSnack("error", "עליך להתחבר כדי להציג מסעדות אהובות.");
+                return;
+            }
+
+            const response = await axios.get(`http://localhost:5000/users/${user._id}/favorites`);
+            const favRestaurants = response.data;
+
+            console.log("🔵 API Response for Favorite Restaurants:", favRestaurants);
+
+            setFavoriteRestaurants(favRestaurants);
+        } catch (error) {
+            console.error("❌ Error fetching favorite restaurants:", error);
+            setSnack("error", "שגיאה בעת טעינת המסעדות האהובות.");
+        }
+    }, [user, setSnack, setFavoriteRestaurants]);
 
 
 
@@ -320,6 +357,7 @@ export default function useRestaurant() {
         reserveRestaurant, 
         fetchUserReservations,
         handleFavRestaurants,
-        handleCancelReservation
+        handleCancelReservation,
+        fetchFavoriteRestaurants
     };
 }

@@ -8,7 +8,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
+import IconButton from "@mui/material/IconButton"; 
 import { useCurrentUser } from "../../users/providers/UserProvider";
 import useRestaurant from "../hooks/useRestaurant";
 import moment from "moment";
@@ -62,7 +62,7 @@ function KosherRestaurantCard({ restaurant }) {
     };
 
     useEffect(() => {
-        setLiked(restaurant.isLiked); // ✅ Ensure sync with backend updates
+        setLiked(restaurant.isLiked); // ✅ Ensure state syncs with backend updates
     }, [restaurant.isLiked]);
 
     const handleLikeToggle = async () => {
@@ -72,13 +72,12 @@ function KosherRestaurantCard({ restaurant }) {
         }
 
         try {
-            await handleLike(restaurant._id); // ✅ Call the API to update like status
-            setLiked((prevLiked) => !prevLiked); // ✅ Toggle local state for instant UI update
+            await handleLike(restaurant._id);
         } catch (error) {
-            console.error("❌ Error toggling like:", error);
             setSnack("error", "שגיאה בעת שינוי סטטוס אהבתי.");
         }
     };
+
 
     const handleNavigateClick = () => {
         if (!restaurant.street || !restaurant.city || !restaurant.country) {

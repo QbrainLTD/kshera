@@ -1,18 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Box, Card, CardContent, CardMedia, Button } from "@mui/material";
 import useRestaurants from "../hooks/useRestaurant";
+import { useCurrentUser } from "../../users/providers/UserProvider";
 
 export default function FavoriteRestaurants() {
-  const { favoriteRestaurants, handleLike } = useRestaurants(); // ✅ Access liked restaurants and handleLike function
+  const { favoriteRestaurants, fetchFavoriteRestaurants, handleLike } = useRestaurants();
+  const { user } = useCurrentUser();
   const [favorites, setFavorites] = useState([]);
+
+  // ✅ Fetch favorite restaurants when page loads
+  useEffect(() => {
+    if (user) {
+      fetchFavoriteRestaurants();
+    }
+  }, [user, fetchFavoriteRestaurants]);
 
   useEffect(() => {
     setFavorites(favoriteRestaurants);
   }, [favoriteRestaurants]);
 
-  const handleToggleLike = async (id) => {
-    await handleLike(id);
+  const handleToggleLike = async (restaurant) => {
+    if (!restaurant || !restaurant._id) {
+      console.error("❌ Error: restaurant or ID is undefined.", restaurant);
+      return;
+    }
+
+    console.log(`🔵 Toggling like for restaurant ID: ${restaurant._id}`);
+
+    await handleLike(restaurant._id);
   };
+
+
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -21,7 +39,7 @@ export default function FavoriteRestaurants() {
       </Typography>
       {favorites.length > 0 ? (
         favorites.map((restaurant) => (
-          <Card key={restaurant._id} sx={{ display: "flex", marginBottom: 2 }}>
+          <Card key={restaurant._id || restaurant.id} sx={{ display: "flex", marginBottom: 2 }}>
             <CardMedia
               component="img"
               sx={{ width: 150 }}
@@ -41,11 +59,13 @@ export default function FavoriteRestaurants() {
               <Box sx={{ marginLeft: 2, marginBottom: 1 }}>
                 <Button
                   variant="contained"
-                  color={restaurant.isLiked ? "error" : "primary"}
-                  onClick={() => handleToggleLike(restaurant._id)}
+                  color={restaurant.likes.includes(user._id) ? "error" : "primary"}
+                  onClick={() => handleToggleLike(restaurant)} // ✅ Pass entire object
                 >
-                  {restaurant.isLiked ? "הסר אהוב" : "הוסף אהוב"}
+                  {restaurant.likes.includes(user._id) ? "הסר אהוב" : "הוסף אהוב"}
                 </Button>
+
+
               </Box>
             </Box>
           </Card>
@@ -55,6 +75,7 @@ export default function FavoriteRestaurants() {
           אין מסעדות אהובות כרגע.
         </Typography>
       )}
+
     </Box>
   );
 }

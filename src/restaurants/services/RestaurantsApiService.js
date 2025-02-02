@@ -127,14 +127,33 @@ export const reserveRestaurant = async (userId, restaurantId) => {
 
 
 
-export const changeLikeStatus = async (restaurantId) => {
+export const changeLikeStatus = async (restaurantId, userId) => {
   try {
-    const { data } = await axios.patch(`${apiUrl}/${restaurantId}`);
+    const token = localStorage.getItem("my token");
+
+    if (!token) throw new Error("Authentication Error: Token is missing");
+
+    console.log("🔵 Sending like request:", { restaurantId, userId });
+
+    const { data } = await axios.patch(
+      `http://localhost:5000/restaurant/${restaurantId}/like`,
+      { userId }, // ✅ Send userId in request body
+      {
+        headers: { "x-auth-token": token },
+      }
+    );
+
     return data;
   } catch (error) {
+    console.error("❌ Error changing like status:", error);
     return Promise.reject(error.message);
   }
 };
+
+
+
+
+
 
 
 export const cancelReservation = async (userId, restaurantId) => {
