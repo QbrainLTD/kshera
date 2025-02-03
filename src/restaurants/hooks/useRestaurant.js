@@ -198,7 +198,7 @@ export default function useRestaurant() {
                 return;
             }
 
-            const response = await axios.get(`http://localhost:5000/users/${user._id}/favorites`);
+            const response = await axios.get(`http://localhost:8181/users/${user._id}/favorites`);
             const favRestaurants = response.data;
 
             setFavoriteRestaurants(favRestaurants);

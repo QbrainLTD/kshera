@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import { Container, Box, Typography, CircularProgress } from "@mui/material";
-import PageHeader from "../../components/PageHeader";
-import KosherRestaurantCard from "../pages/KosherRestaurantCard";
-import useRestaurant from "../hooks/useRestaurant";
+import { Container, Typography, Box } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useCurrentUser } from "../../users/providers/UserProvider";
+import useRestaurant from "../hooks/useRestaurant";
+import KosherRestaurantCard from "../pages/KosherRestaurantCard";
+import { useSnack } from "../../providers/SnackbarProvider";
 
 export default function MyRestaurantPage() {
   const {
@@ -11,61 +11,62 @@ export default function MyRestaurantPage() {
     error,
     restaurants,
     fetchMyRestaurants,
-    deleteRestaurantById,
+    deleteRestaurantById, // ✅ Add delete function from hook
   } = useRestaurant();
+
   const { user } = useCurrentUser();
+  const setSnack = useSnack();
+  const [accessDenied, setAccessDenied] = useState(false);
 
   useEffect(() => {
-    fetchMyRestaurants();
-  }, [fetchMyRestaurants]);
+    if (user?.isBusiness) {
+      fetchMyRestaurants();
+    } else {
+      setAccessDenied(true);
+      setSnack("error", "רק משתמשים עסקיים יכולים לבצע פעולות בדף זה");
+    }
+  }, [fetchMyRestaurants, user, setSnack]);
+
+  // ✅ Handle restaurant deletion and refresh view
+  const handleDeleteRestaurant = async (restaurantId) => {
+    try {
+      await deleteRestaurantById(restaurantId);
+      await fetchMyRestaurants(); // ✅ Refresh after deletion
+      setSnack("success", "המסעדה נמחקה בהצלחה!");
+    } catch (error) {
+      setSnack("error", "שגיאה בעת מחיקת המסעדה.");
+    }
+  };
 
   return (
     <Container sx={{ mt: 2 }}>
-      <PageHeader
-        title="My Restaurants"
-        subtitle="On this page, you can manage and view all the restaurants you created."
-      />
+      <Typography sx={{ textAlign: "center", fontWeight: "bold", mb: 3 }} variant="h3">
+        המסעדות שלי
+      </Typography>
 
-      {/* Loading State */}
-      {isLoading && (
-        <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
-          <CircularProgress />
+      {isLoading && <Typography>Loading...</Typography>}
+
+      {accessDenied ? (
+        <Box sx={{ textAlign: "center", mt: 3 }}>
+          <Typography variant="h5" color="error" fontWeight="bold">
+            ❌ רק משתמשים עסקיים יכולים לבצע פעולות בדף זה
+          </Typography>
+        </Box>
+      ) : error ? (
+        <Typography color="error">{error}</Typography>
+      ) : restaurants.length === 0 ? (
+        <Typography>No restaurants found.</Typography>
+      ) : (
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center" }}>
+          {restaurants.map((restaurant) => (
+            <KosherRestaurantCard
+              key={restaurant._id}
+              restaurant={restaurant}
+              onDelete={() => handleDeleteRestaurant(restaurant._id)} // ✅ Pass delete handler
+            />
+          ))}
         </Box>
       )}
-
-      {/* Error State */}
-      {error && (
-        <Typography color="error" align="center" mt={2}>
-          {error}
-        </Typography>
-      )}
-
-      {/* No Restaurants */}
-      {!isLoading && !error && restaurants.length === 0 && (
-        <Typography align="center" mt={2}>
-          You haven't added any restaurants yet.
-        </Typography>
-      )}
-
-      {/* Render Restaurants */}
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: 2,
-          mt: 3,
-        }}
-      >
-        {restaurants.map((restaurant) => (
-          <KosherRestaurantCard
-            key={restaurant._id}
-            restaurant={restaurant}
-            showDelete={restaurant.user_id === user?._id} // ✅ Show delete button only if user is the creator
-            onDelete={() => deleteRestaurantById(restaurant._id)} // ✅ Handle delete action
-          />
-        ))}
-      </Box>
     </Container>
   );
 }

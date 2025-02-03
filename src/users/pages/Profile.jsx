@@ -46,7 +46,7 @@ export default function Profile() {
                     return;
                 }
 
-                const response = await axios.get(`http://localhost:5000/users/${user._id}`);
+                const response = await axios.get(`http://localhost:8181/users/${user._id}`);
                 setUserData(response.data);
 
                 setFormData({
@@ -110,7 +110,7 @@ export default function Profile() {
             console.log("🔵 Sending update data:", updateData);
 
             const response = await axios.put(
-                `http://localhost:5000/users/${user._id}`,
+                `http://localhost:8181/users/${user._id}`,
                 updateData
             );
 
