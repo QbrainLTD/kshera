@@ -34,13 +34,13 @@ export const getUserData = async () => {
 
 export const reserveRestaurant = async (userId, restaurantId) => {
   try {
-    const token = localStorage.getItem("my token"); // Ensure authentication
+    const token = localStorage.getItem("my token"); 
     const response = await axios.post(
-      `${apiUrl}/${userId}/reserve`,  // ✅ Corrected URL
+      `${apiUrl}/${userId}/reserve`,  
       { restaurantId },
       {
         headers: {
-          "x-auth-token": token,  // ✅ Ensure user authentication
+          "x-auth-token": token,  
         },
       }
     );

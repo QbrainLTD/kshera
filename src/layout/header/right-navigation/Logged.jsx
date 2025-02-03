@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import Avatar from "@mui/material/Avatar";
 import LogoutIcon from '@mui/icons-material/Logout';
 import useUsers from "../../../users/hooks/useUsers";
-import { useCurrentUser } from "../../../users/providers/UserProvider"; // ✅ Import User Context
+import { useCurrentUser } from "../../../users/providers/UserProvider"; 
 import { Box } from "@mui/material";
 import { useMenu } from "../menu/MenuProvider";
 

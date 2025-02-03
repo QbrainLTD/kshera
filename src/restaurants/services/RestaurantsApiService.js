@@ -102,18 +102,18 @@ export const editRestaurant = async (RestaurantId, normalaizedRestaurant) => {
 };
 export const reserveRestaurant = async (userId, restaurantId) => {
   try {
-    const token = localStorage.getItem("my token"); // ✅ Get JWT token
+    const token = localStorage.getItem("my token"); 
 
     if (!token) {
       throw new Error("Authentication Error: Token is missing");
     }
 
     const response = await axios.post(
-      `http://localhost:5000/users/${userId}/reserve`,  // ✅ Correct API path
+      `http://localhost:5000/users/${userId}/reserve`,  
       { restaurantId },
       {
         headers: {
-          "x-auth-token": token, // ✅ Send authentication token
+          "x-auth-token": token, 
         },
       }
     );

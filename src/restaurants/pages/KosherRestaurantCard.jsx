@@ -62,7 +62,7 @@ function KosherRestaurantCard({ restaurant }) {
     };
 
     useEffect(() => {
-        setLiked(restaurant.likes.includes(user?._id)); // ✅ Check user ID in likes array
+        setLiked(restaurant.likes.includes(user?._id)); 
     }, [restaurant.likes, user]);
 
 
@@ -75,7 +75,6 @@ function KosherRestaurantCard({ restaurant }) {
         try {
             await handleLike(restaurant._id);
 
-            // ✅ Toggle local state after API call
             setLiked((prevLiked) => !prevLiked);
         } catch (error) {
             setSnack("error", "שגיאה בעת שינוי סטטוס אהבתי.");
@@ -105,7 +104,7 @@ function KosherRestaurantCard({ restaurant }) {
         }
     };
 
-    // ✅ Display Opening Hours Correctly
+    //Display Opening Hours Correctly
     const openingHoursText = restaurant.openingHours
         ? `${restaurant.openingHours.from} - ${restaurant.openingHours.to}`
         : "שעות פתיחה אינן זמינות";
@@ -126,12 +125,12 @@ function KosherRestaurantCard({ restaurant }) {
                     {`${restaurant.street}, ${restaurant.city}, ${restaurant.country}`}
                 </Typography>
 
-                {/* ✅ Show Opening Hours */}
+
                 <Typography variant="body2" color="text.secondary" mb={1}>
                     <strong>שעות פתיחה:</strong> {openingHoursText}
                 </Typography>
 
-                {/* ✅ Show Open/Closed Status */}
+            
                 <Typography variant="body2" color={restaurant.status === "סגור" ? "error" : "success"} mb={2}>
                     {restaurant.status}
                 </Typography>
@@ -173,7 +172,7 @@ KosherRestaurantCard.propTypes = {
         country: PropTypes.string,
         city: PropTypes.string,
         street: PropTypes.string,
-        rating: PropTypes.number.isRequired,
+        rating: PropTypes.number,
         status: PropTypes.string.isRequired,
         kosher: PropTypes.bool.isRequired,
         tags: PropTypes.arrayOf(PropTypes.string).isRequired,

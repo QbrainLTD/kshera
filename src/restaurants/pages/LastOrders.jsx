@@ -29,7 +29,7 @@ export default function LastOrders() {
   const [lastOrders, setLastOrders] = useState([]);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // ✅ Detect Mobile Screens
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); 
 
   useEffect(() => {
     if (user?._id) {
@@ -52,8 +52,6 @@ export default function LastOrders() {
       <Typography sx={{ textAlign: "center", fontWeight: "bold", mb: 3 }} variant="h3">
         הזמנות אחרונות
       </Typography>
-
-      {/* ✅ Switch to Card View for Mobile */}
       {isMobile ? (
         <Grid container spacing={2}>
           {lastOrders.length > 0 ? (

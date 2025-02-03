@@ -20,8 +20,8 @@ export default function RestaurantsPage() {
   const [selectedCountry, setSelectedCountry] = useState("");
 
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery("(max-width:1200px)"); // Below 1200px
-  const isMobile = useMediaQuery("(max-width:600px)"); // Below 600px for extra mobile adjustments
+  const isSmallScreen = useMediaQuery("(max-width:1200px)"); 
+  const isMobile = useMediaQuery("(max-width:600px)"); 
 
   useEffect(() => {
     fetchRestaurants();
@@ -48,7 +48,7 @@ export default function RestaurantsPage() {
 
   return (
     <>
-      {/* Filters Section - Moves to Top for Smaller Screens */}
+     
       <Box
         sx={{
           display: "flex",
@@ -63,10 +63,10 @@ export default function RestaurantsPage() {
           padding: 2,
         }}
       >
-        {/* CheckBoxRest - Moves Above Cards for Screens < 1200px & Becomes Row */}
+        
         <CheckBoxRest onFilterChange={handleFilterTags} />
 
-        {/* Country Filter Dropdown */}
+        
         <FormControl sx={{ minWidth: 200 }}>
           <InputLabel>בחר מדינה</InputLabel>
           <Select value={selectedCountry} onChange={handleCountryChange}>
@@ -85,7 +85,6 @@ export default function RestaurantsPage() {
 
       </Box>
 
-      {/* Main Content - Cards & Sidebar */}
       <Box
         sx={{
           display: "flex",
@@ -99,7 +98,6 @@ export default function RestaurantsPage() {
           padding: 2,
         }}
       >
-        {/* Restaurants Section */}
         <Box
           sx={{
             display: "flex",
@@ -114,7 +112,7 @@ export default function RestaurantsPage() {
               key={index}
               restaurant={{
                 ...restaurant,
-                address: `${restaurant.street}, ${restaurant.city}, ${restaurant.country}` // Reconstruct address
+                address: `${restaurant.street}, ${restaurant.city}, ${restaurant.country}` 
               }}
             />
 

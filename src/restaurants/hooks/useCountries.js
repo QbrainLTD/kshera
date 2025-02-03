@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-// Predefined list of countries in Hebrew with diplomatic relations with Israel
 const supportedCountries = [
     { englishName: "Israel", name: "ישראל" },
     { englishName: "United States", name: "ארצות הברית" },
@@ -34,7 +33,6 @@ const useCountries = () => {
     const [countries, setCountries] = useState([]);
 
     useEffect(() => {
-        // Sort the predefined country list by Hebrew name and update state
         setCountries([...supportedCountries].sort((a, b) =>
             a.name.localeCompare(b.name, "he")
         ));

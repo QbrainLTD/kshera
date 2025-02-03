@@ -63,11 +63,6 @@ const Menu = ({ isOpen, anchorEl, onClose }) => {
               navigateTo={ROUTES.USER_PROFILE || "/profile"} // ✅ Fallback to "/profile"
               onClick={onClose}
             />
-            <MenuLink
-              text="edit account"
-              navigateTo={ROUTES.EDIT_USER || "/edit-account"} // ✅ Fallback to "/edit-account"
-              onClick={onClose}
-            />
             <MenuItem onClick={onLogout}>Logout</MenuItem>
           </>
         )}

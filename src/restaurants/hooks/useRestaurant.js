@@ -1,5 +1,5 @@
 import ROUTES from "../../routes/routesModel";
-import normalizeRestaurant from "../helpers/normalization/normalizeRestaurant"; // Replace with your normalization helper
+import normalizeRestaurant from "../helpers/normalization/normalizeRestaurant"; 
 import { useCurrentUser } from "../../users/providers/UserProvider";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import useAxios from "../../hooks/useAxios";
@@ -21,26 +21,26 @@ import { reserveRestaurant } from "../../users/services/usersApiService"
 import axios from "axios";
 
 export default function useRestaurant() {
-    const [restaurants, setRestaurants] = useState([]); // All restaurants
-    const [restaurant, setRestaurant] = useState(); // Single restaurant details
-    const [isLoading, setIsLoading] = useState(true); // Loading state
-    const [error, setError] = useState(null); // Error state
-    const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Filtered restaurants
-    const [favoriteRestaurants, setFavoriteRestaurants] = useState([]); // Favorite restaurants
-    const [searchParams] = useSearchParams(); // For search query
+    const [restaurants, setRestaurants] = useState([]); 
+    const [restaurant, setRestaurant] = useState(); 
+    const [isLoading, setIsLoading] = useState(true); 
+    const [error, setError] = useState(null); 
+    const [filteredRestaurants, setFilteredRestaurants] = useState([]); 
+    const [favoriteRestaurants, setFavoriteRestaurants] = useState([]); 
+    const [searchParams] = useSearchParams(); 
     const [reservations, setReservations] = useState([]);
-    const { user, setUser } = useCurrentUser(); // Current user context
-    const setSnack = useSnack(); // Snackbar for notifications
+    const { user, setUser } = useCurrentUser(); 
+    const setSnack = useSnack(); 
     const navigate = useNavigate();
     useAxios();
 
-    // Fetch all restaurants
+    
     const fetchRestaurants = useCallback(async () => {
         setIsLoading(true);
         try {
             const data = await getRestaurants();
             setRestaurants(data);
-            setFilteredRestaurants(data); // Initialize filtered state
+            setFilteredRestaurants(data); 
             setSnack("success", "Restaurants loaded successfully!");
         } catch (err) {
             setError(err.message || "Failed to fetch restaurants");
@@ -50,13 +50,13 @@ export default function useRestaurant() {
         }
     }, [setSnack]);
 
-    // Fetch my restaurants
+    
     const fetchMyRestaurants = useCallback(async () => {
         setIsLoading(true);
         try {
             const data = await getMyRestaurants();
             setRestaurants(data);
-            setFilteredRestaurants(data); // Update filtered state
+            setFilteredRestaurants(data); 
             setSnack("success", "Your restaurants loaded successfully!");
         } catch (err) {
             setError(err.message || "Failed to fetch your restaurants");
@@ -66,7 +66,7 @@ export default function useRestaurant() {
         }
     }, [setSnack]);
 
-    // Fetch single restaurant by ID
+    
     const fetchRestaurantById = useCallback(async (id) => {
         setIsLoading(true);
         try {
@@ -81,7 +81,7 @@ export default function useRestaurant() {
         }
     }, [setSnack]);
 
-    // Add a new restaurant
+    
     const addRestaurant = useCallback(async (newRestaurant) => {
         setIsLoading(true);
         try {
@@ -89,7 +89,7 @@ export default function useRestaurant() {
             const data = await createRestaurant(normalizedRestaurant);
             setRestaurants((prev) => [...prev, data]);
             setSnack("success", "New restaurant created successfully!");
-            navigate(ROUTES.ROOT); // Redirect after success
+            navigate(ROUTES.ROOT); 
         } catch (err) {
             setError(err.message || "Failed to create restaurant");
             setSnack("error", err.message || "Failed to create restaurant");
@@ -135,20 +135,19 @@ export default function useRestaurant() {
 
     const handleLike = useCallback(async (restaurantId) => {
         try {
-            const updatedRestaurant = await changeLikeStatus(restaurantId, user._id); // Ensure userId is sent
+            const updatedRestaurant = await changeLikeStatus(restaurantId, user._id); 
 
-            // ✅ Update restaurants list
             setRestaurants((prev) =>
                 prev.map((r) => (r._id === restaurantId ? updatedRestaurant : r))
             );
 
-            // ✅ Recalculate Favorite Restaurants
+            
             setFavoriteRestaurants((prev) => {
-                const isLiked = updatedRestaurant.likes.includes(user._id); // Check if user still likes it
+                const isLiked = updatedRestaurant.likes.includes(user._id); 
                 if (isLiked) {
-                    return [...prev, updatedRestaurant]; // Add to favorites
+                    return [...prev, updatedRestaurant]; 
                 } else {
-                    return prev.filter((r) => r._id !== restaurantId); // Remove from favorites
+                    return prev.filter((r) => r._id !== restaurantId); 
                 }
             });
 
@@ -160,30 +159,21 @@ export default function useRestaurant() {
     }, [setRestaurants, setFavoriteRestaurants, setSnack, user]);
 
 
-
-
-
-
-
-
-
-
-
     const handleFavRestaurants = useCallback(async () => {
         try {
             setIsLoading(true);
             const allRestaurants = await getRestaurants();
-            console.log("All Restaurants:", allRestaurants); // ✅ Log all restaurants
+            console.log("All Restaurants:", allRestaurants); 
 
             if (user && user._id) {
                 const favData = allRestaurants
                     .filter((restaurant) => restaurant.likes.includes(user._id))
                     .map((restaurant) => ({
                         ...restaurant,
-                        _id: restaurant._id || restaurant.id || null, // ✅ Ensure `_id` exists
+                        _id: restaurant._id || restaurant.id || null, 
                     }));
 
-                console.log("🛠 Filtered Favorite Restaurants:", favData); // ✅ Log filtered data
+                console.log("🛠 Filtered Favorite Restaurants:", favData); 
 
                 setFavoriteRestaurants(favData);
             } else {
@@ -221,9 +211,6 @@ export default function useRestaurant() {
     }, [user, setSnack, setFavoriteRestaurants]);
 
 
-
-
-    // Filter restaurants based on query
     useEffect(() => {
         const query = searchParams.get("q")?.toLowerCase() || "";
 
@@ -242,7 +229,7 @@ export default function useRestaurant() {
         setFilteredRestaurants(
             restaurants.filter((restaurant) =>
                 tags.length === 0
-                    ? true // Show all restaurants if no tags are selected
+                    ? true 
                     : restaurant.tags.some((tag) => tags.includes(tag))
             )
         );
@@ -259,7 +246,7 @@ export default function useRestaurant() {
                 console.log("✅ Reservations fetched:", response.data);
             }
 
-            return response.data || [];  // Ensure it always returns an array
+            return response.data || [];  
         } catch (error) {
             console.error("❌ Error fetching reservations:", error);
             return [];
@@ -284,11 +271,10 @@ export default function useRestaurant() {
 
             const updatedUser = response.data.user;
 
-            // ✅ Save the correct user object to state and local storage
+            
             setUser(updatedUser);
             localStorage.setItem("user", JSON.stringify(updatedUser));
 
-            // ✅ Ensure new reservation is reflected in state
             setReservations([...reservations, restaurantId]);
 
             setSnack("success", "המסעדה נוספה בהצלחה להזמנות שלך!");
@@ -316,7 +302,6 @@ export default function useRestaurant() {
         try {
             await cancelReservation(user._id, restaurantId);
 
-            // ✅ Re-fetch user reservations after cancellation
             const updatedReservations = await fetchUserReservations(user._id);
             setReservations(updatedReservations);
 

@@ -8,7 +8,7 @@ export default function FavoriteRestaurants() {
   const { user } = useCurrentUser();
   const [favorites, setFavorites] = useState([]);
 
-  // ✅ Fetch favorite restaurants when page loads
+  
   useEffect(() => {
     if (user) {
       fetchFavoriteRestaurants();
@@ -24,9 +24,6 @@ export default function FavoriteRestaurants() {
       console.error("❌ Error: restaurant or ID is undefined.", restaurant);
       return;
     }
-
-    console.log(`🔵 Toggling like for restaurant ID: ${restaurant._id}`);
-
     await handleLike(restaurant._id);
   };
 
@@ -34,7 +31,7 @@ export default function FavoriteRestaurants() {
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography sx={{ textAlign: "center", fontWeight: "bold", mb: 3 }} variant="h3">
         המסעדות האהובות עלי
       </Typography>
       {favorites.length > 0 ? (
@@ -60,18 +57,16 @@ export default function FavoriteRestaurants() {
                 <Button
                   variant="contained"
                   color={restaurant.likes.includes(user._id) ? "error" : "primary"}
-                  onClick={() => handleToggleLike(restaurant)} // ✅ Pass entire object
+                  onClick={() => handleToggleLike(restaurant)} 
                 >
                   {restaurant.likes.includes(user._id) ? "הסר אהוב" : "הוסף אהוב"}
                 </Button>
-
-
               </Box>
             </Box>
           </Card>
         ))
       ) : (
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="h5" sx={{ textAlign: "center", width: "100%", mt: 3, color: "#757575" }}>
           אין מסעדות אהובות כרגע.
         </Typography>
       )}
