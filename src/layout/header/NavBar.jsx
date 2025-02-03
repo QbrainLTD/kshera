@@ -6,6 +6,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import PersonPinIcon from "@mui/icons-material/PersonPin";
 import { Box } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import { useNavigate, useLocation } from "react-router-dom";
 import ROUTES from "../../routes/routesModel";
 import { useCurrentUser } from "../../users/providers/UserProvider";
@@ -15,22 +16,23 @@ export default function IconLabelTabs() {
   const location = useLocation();
   const { user } = useCurrentUser();
 
-  // ✅ Define available tabs dynamically based on user login status
+ 
   const tabs = [
     { label: "קרוב אליי", icon: <PersonPinIcon sx={{ color: "#607d8b", fontSize: "2rem" }} />, route: ROUTES.ROOT },
     { label: "אודות", icon: <InfoIcon sx={{ color: "#f50057", fontSize: "2rem" }} />, route: ROUTES.ABOUT_PAGE },
+   
     ...(user ? [
       { label: "אהבתי", icon: <FavoriteIcon sx={{ color: "red", fontSize: "2rem" }} />, route: ROUTES.FAV_REST },
-      { label: "הזמנות אחרונות", icon: <PhoneIcon sx={{ color: "#00e676", fontSize: "2rem" }} />, route: ROUTES.LAST_ORDERS }
+      { label: "הזמנות אחרונות", icon: <PhoneIcon sx={{ color: "#00e676", fontSize: "2rem" }} />, route: ROUTES.LAST_ORDERS },
+      { label: "המסעדות שלי", icon: <StorefrontIcon sx={{ color: "#00e67", fontSize: "2rem" }} />, route: ROUTES.My_Restaurants }
     ] : [])
   ];
 
-  // ✅ Ensure current tab index is always valid
   const currentTab = Math.max(tabs.findIndex(tab => tab.route === location.pathname), 0);
 
   useEffect(() => {
     if (currentTab === -1) {
-      navigate(ROUTES.ROOT); // Redirect to home if no valid tab is found
+      navigate(ROUTES.ROOT);
     }
   }, [currentTab, navigate]);
 

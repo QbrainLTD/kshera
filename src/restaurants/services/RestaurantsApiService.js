@@ -133,7 +133,6 @@ export const changeLikeStatus = async (restaurantId, userId) => {
 
     if (!token) throw new Error("Authentication Error: Token is missing");
 
-    console.log("🔵 Sending like request:", { restaurantId, userId });
 
     const { data } = await axios.patch(
       `http://localhost:5000/restaurant/${restaurantId}/like`,

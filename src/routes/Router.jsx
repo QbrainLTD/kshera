@@ -11,6 +11,7 @@ import MyRestaurantPage from "../restaurants/pages/MyRestaurantPage";
 import CreateRestaurant from "../restaurants/pages/CreateRestaurant";
 import AboutPage from "../pages/AboutPage";
 import Profile from "../users/pages/Profile";
+import ContactUs from "../pages/ContactUs";
 
 export default function Router() {
   return (
@@ -25,6 +26,7 @@ export default function Router() {
         <Route path={ROUTES.CREATE_RESTAURANT} element={<CreateRestaurant />} />
         <Route path={ROUTES.ABOUT_PAGE} element={<AboutPage />} />
         <Route path={ROUTES.PROFILE} element={<Profile />} />
+        <Route path={ROUTES.CONTACTUS} element={<ContactUs />} />
 
       </Route>
     </Routes>

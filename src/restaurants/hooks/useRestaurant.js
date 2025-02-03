@@ -163,7 +163,7 @@ export default function useRestaurant() {
         try {
             setIsLoading(true);
             const allRestaurants = await getRestaurants();
-            console.log("All Restaurants:", allRestaurants); 
+             
 
             if (user && user._id) {
                 const favData = allRestaurants
@@ -173,7 +173,7 @@ export default function useRestaurant() {
                         _id: restaurant._id || restaurant.id || null, 
                     }));
 
-                console.log("🛠 Filtered Favorite Restaurants:", favData); 
+                
 
                 setFavoriteRestaurants(favData);
             } else {
@@ -201,11 +201,9 @@ export default function useRestaurant() {
             const response = await axios.get(`http://localhost:5000/users/${user._id}/favorites`);
             const favRestaurants = response.data;
 
-            console.log("🔵 API Response for Favorite Restaurants:", favRestaurants);
-
             setFavoriteRestaurants(favRestaurants);
         } catch (error) {
-            console.error("❌ Error fetching favorite restaurants:", error);
+            
             setSnack("error", "שגיאה בעת טעינת המסעדות האהובות.");
         }
     }, [user, setSnack, setFavoriteRestaurants]);
@@ -237,21 +235,23 @@ export default function useRestaurant() {
 
     const fetchUserReservations = useCallback(async (userId) => {
         try {
-            console.log(`🔵 Fetching reservations for user: ${userId}`);
+            setSnack("info", `🔵 reservations for user: ${userId}`);
+
             const response = await axios.get(`/users/${userId}/reservations`);
 
             if (!response.data || response.data.length === 0) {
-                console.warn("⚠️ No reservations found.");
+                setSnack("warning", "⚠️ No reservations found.");
             } else {
-                console.log("✅ Reservations fetched:", response.data);
+                setSnack("success", `✅ ${response.data.length} reservations successfully!`);
             }
 
-            return response.data || [];  
+            return response.data || [];
         } catch (error) {
-            console.error("❌ Error fetching reservations:", error);
+            setSnack("error", "❌ Error fetching reservations. Please try again.");
             return [];
         }
-    }, []);
+    }, [setSnack]);
+
 
 
     const reserveRestaurant = useCallback(async (restaurantId) => {

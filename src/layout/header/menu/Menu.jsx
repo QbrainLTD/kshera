@@ -31,10 +31,10 @@ const Menu = ({ isOpen, anchorEl, onClose }) => {
       }}
     >
       <Box>
-        {/* Ensure navigateTo prop is always defined */}
+        
         <MenuLink
           text="about"
-          navigateTo={ROUTES.ABOUT || "/about"} // ✅ Fallback to "/about"
+          navigateTo={ROUTES.ABOUT_PAGE || "/about"} // ✅ Fallback to "/about"
           onClick={onClose}
           styles={{ display: { xs: "block", md: "none" } }}
         />
@@ -49,7 +49,7 @@ const Menu = ({ isOpen, anchorEl, onClose }) => {
             />
             <MenuLink
               text="signup"
-              navigateTo={ROUTES.SIGNUP || "/signup"} // ✅ Fallback to "/signup"
+              navigateTo={ROUTES.SIGN_UP || "/signup"} // ✅ Fallback to "/signup"
               onClick={onClose}
               styles={{ display: { xs: "block", md: "none" } }}
             />
@@ -60,7 +60,12 @@ const Menu = ({ isOpen, anchorEl, onClose }) => {
           <>
             <MenuLink
               text="profile"
-              navigateTo={ROUTES.USER_PROFILE || "/profile"} // ✅ Fallback to "/profile"
+              navigateTo={ROUTES.PROFILE || "/profile"} // ✅ Fallback to "/profile"
+              onClick={onClose}
+            />
+            <MenuLink
+              text="Contact-Us"
+              navigateTo={ROUTES.CONTACTUS || "/contactUs"} // ✅ Fallback to "/profile"
               onClick={onClose}
             />
             <MenuItem onClick={onLogout}>Logout</MenuItem>

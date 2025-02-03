@@ -8,7 +8,8 @@ const ROUTES = {
   My_Restaurants: "/MyRestaurantPage",
   CREATE_RESTAURANT: "/CreateRestaurant",
   ABOUT_PAGE: "/aboutPage",
-  PROFILE: "/profile"
+  PROFILE: "/profile",
+  CONTACTUS:"/contactUs"
 };
 
 export default ROUTES;

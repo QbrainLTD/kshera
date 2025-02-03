@@ -8,7 +8,8 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton"; 
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete"; // ✅ Import delete icon
 import { useCurrentUser } from "../../users/providers/UserProvider";
 import useRestaurant from "../hooks/useRestaurant";
 import moment from "moment";
@@ -53,18 +54,18 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 function KosherRestaurantCard({ restaurant }) {
-    const { handleLike, reserveRestaurant } = useRestaurant();
+    const { handleLike, reserveRestaurant, deleteRestaurantById } = useRestaurant();
     const { user } = useCurrentUser();
     const [liked, setLiked] = useState(restaurant.isLiked);
     const setSnack = useSnack();
+
     const handleReservationClick = () => {
         reserveRestaurant(restaurant._id);
     };
 
     useEffect(() => {
-        setLiked(restaurant.likes.includes(user?._id)); 
+        setLiked(restaurant.likes.includes(user?._id));
     }, [restaurant.likes, user]);
-
 
     const handleLikeToggle = async () => {
         if (!user?._id) {
@@ -74,14 +75,11 @@ function KosherRestaurantCard({ restaurant }) {
 
         try {
             await handleLike(restaurant._id);
-
             setLiked((prevLiked) => !prevLiked);
         } catch (error) {
             setSnack("error", "שגיאה בעת שינוי סטטוס אהבתי.");
         }
     };
-
-
 
     const handleNavigateClick = () => {
         if (!restaurant.street || !restaurant.city || !restaurant.country) {
@@ -104,10 +102,22 @@ function KosherRestaurantCard({ restaurant }) {
         }
     };
 
-    //Display Opening Hours Correctly
+    // ✅ Display Opening Hours Correctly
     const openingHoursText = restaurant.openingHours
         ? `${restaurant.openingHours.from} - ${restaurant.openingHours.to}`
         : "שעות פתיחה אינן זמינות";
+
+    // ✅ Handle Delete Restaurant
+    const handleDeleteRestaurant = async () => {
+        if (!window.confirm("האם אתה בטוח שברצונך למחוק את המסעדה?")) return;
+
+        try {
+            await deleteRestaurantById(restaurant._id);
+            setSnack("success", "המסעדה נמחקה בהצלחה!");
+        } catch (error) {
+            setSnack("error", "שגיאה בעת מחיקת המסעדה.");
+        }
+    };
 
     return (
         <StyledCard>
@@ -125,12 +135,10 @@ function KosherRestaurantCard({ restaurant }) {
                     {`${restaurant.street}, ${restaurant.city}, ${restaurant.country}`}
                 </Typography>
 
-
                 <Typography variant="body2" color="text.secondary" mb={1}>
                     <strong>שעות פתיחה:</strong> {openingHoursText}
                 </Typography>
 
-            
                 <Typography variant="body2" color={restaurant.status === "סגור" ? "error" : "success"} mb={2}>
                     {restaurant.status}
                 </Typography>
@@ -140,11 +148,10 @@ function KosherRestaurantCard({ restaurant }) {
                     {restaurant.tags.map((tag, index) => (
                         <Chip key={index} label={tag} />
                     ))}
-                    {user && ( 
+                    {user && (
                         <IconButton onClick={handleLikeToggle}>
                             <FavoriteIcon sx={{ color: liked ? "red" : "gray" }} />
                         </IconButton>
-
                     )}
                 </Box>
 
@@ -159,7 +166,11 @@ function KosherRestaurantCard({ restaurant }) {
                     <ActionButton variant="contained" color="info" onClick={handleReservationClick}>
                         הזמנת שולחן
                     </ActionButton>
-
+                    {user?._id === restaurant.user_id && (
+                        <IconButton onClick={handleDeleteRestaurant} color="error">
+                            <DeleteIcon />
+                        </IconButton>
+                    )}
                 </Box>
             </Box>
         </StyledCard>
@@ -183,6 +194,7 @@ KosherRestaurantCard.propTypes = {
             from: PropTypes.string,
             to: PropTypes.string,
         }),
+        user_id: PropTypes.string.isRequired, // ✅ Ensure the creator ID is included
     }).isRequired,
 };
 
