@@ -122,7 +122,7 @@ export default function ContactUs() {
 
                             <Box display="flex" alignItems="center" mt={2} gap={1}>
                                 <PhoneIcon color="primary" />
-                                <Typography variant="body1">+972-50-1234567</Typography>
+                                <Typography variant="body1">+972-77-9970007</Typography>
                             </Box>
 
                             <Box display="flex" alignItems="center" mt={2} gap={1}>
