@@ -40,15 +40,15 @@ export default function ContactUs() {
                 <Grid item xs={12} md={6}>
                     <Card sx={{ p: 3, boxShadow: 3 }}>
                         <CardContent>
-                            <Typography variant="h5" gutterBottom fontWeight="bold">
+                            <Typography sx={{ textAlign: "center", direction: "rtl" }} variant="h5" gutterBottom fontWeight="bold">
                                 צור קשר
                             </Typography>
-                            <Typography variant="body2" color="textSecondary" gutterBottom>
+                            <Typography sx={{ textAlign: "center", direction: "rtl" }} variant="body2" color="textSecondary" gutterBottom>
                                 נשמח לשמוע ממך! מלא את הפרטים ואנו ניצור קשר בהקדם.
                             </Typography>
 
-                            <form onSubmit={handleSubmit}>
-                                <TextField
+                            <form  onSubmit={handleSubmit}>
+                                <TextField 
                                     fullWidth
                                     label="שם מלא"
                                     name="fullName"
@@ -80,6 +80,7 @@ export default function ContactUs() {
                                     required
                                 />
                                 <TextField
+                                    
                                     fullWidth
                                     label="כתוב לנו"
                                     name="message"
@@ -111,11 +112,11 @@ export default function ContactUs() {
                 <Grid item xs={12} md={6}>
                     <Card sx={{ p: 3, boxShadow: 3, textAlign: "center" }}>
                         <CardContent>
-                            <Typography variant="h5" fontWeight="bold">
+                            <Typography sx={{ textAlign: "center", direction:"rtl" }} variant="h5" fontWeight="bold">
                                 צור קשר עם QBrain
                             </Typography>
 
-                            <Box display="flex" alignItems="center" mt={2} gap={1}>
+                            <Box  display="flex" alignItems="center" mt={2} gap={1}>
                                 <EmailIcon color="primary" />
                                 <Typography variant="body1">info@qbrain.co.il</Typography>
                             </Box>
