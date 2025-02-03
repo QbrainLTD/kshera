@@ -3,7 +3,11 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Box from '@mui/material/Box';
-import { red, blue, green, orange, pink, purple } from '@mui/material/colors';
+import {
+    red, blue, green, orange, pink, purple,
+    brown, cyan, deepPurple, lime, indigo,
+    deepOrange, teal, amber, blueGrey, lightGreen
+} from '@mui/material/colors';
 import { Button } from '@mui/material';
 import ROUTES from '../../routes/routesModel';
 import { useNavigate } from 'react-router-dom';
@@ -12,13 +16,17 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const restaurantTags = [
-    { label: 'בשרי', color: red[800] },
-    { label: 'חלבי', color: blue[800] },
-    { label: 'אסייתי', color: green[800] },
-    { label: 'מינימרקט', color: orange[800] },
-    { label: 'קינוחים', color: pink[800] },
-    { label: 'בית קפה', color: purple[800] },
+    { label: 'בשרי', color: red[800] }, 
+    { label: 'חלבי', color: blue[800] }, 
+    { label: 'אסייתי', color: green[800] }, 
+    { label: 'מינימרקט', color: orange[800] }, 
+    { label: 'קינוחים', color: pink[800] }, 
+    { label: 'בית קפה', color: purple[800] }, 
+    { label: 'מאפייה', color: brown[800] }, 
+    { label: 'בר', color: cyan[800] }, 
+    { label: 'דגים', color: teal[800] },
 ];
+
 
 export default function CheckBoxRest({ onFilterChange }) {
     const [checkedState, setCheckedState] = useState(
