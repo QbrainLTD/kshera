@@ -198,7 +198,7 @@ export default function useRestaurant() {
                 return;
             }
 
-            const response = await axios.get(`http://localhost:8181/users/${user._id}/favorites`);
+            const response = await axios.get(`https://kshera-server.onrender.com/users/${user._id}/favorites`);
             const favRestaurants = response.data;
 
             setFavoriteRestaurants(favRestaurants);
@@ -237,7 +237,7 @@ export default function useRestaurant() {
         try {
             setSnack("info", `🔵 reservations for user: ${userId}`);
 
-            const response = await axios.get(`/users/${userId}/reservations`);
+            const response = await axios.get(`https://kshera-server.onrender.com/users/${userId}/reservations`);
 
             if (!response.data || response.data.length === 0) {
                 setSnack("warning", "⚠️ No reservations found.");
@@ -263,7 +263,7 @@ export default function useRestaurant() {
         setIsLoading(true);
 
         try {
-            const response = await axios.post(`/users/${user._id}/reserve`, { restaurantId });
+            const response = await axios.post(`https://kshera-server.onrender.com/users/${user._id}/reserve`, { restaurantId });
 
             if (!response.data || !response.data.user) {
                 throw new Error("Invalid server response. User data missing.");

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const apiUrl = "http://localhost:8181/users";
+const apiUrl = "https://kshera-server.onrender.com/users";
 
 export const login = async (userLogin) => {
   try {

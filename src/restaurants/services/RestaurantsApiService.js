@@ -1,5 +1,5 @@
 import axios from "axios";
-const apiUrl = "http://localhost:8181/restaurant";
+const apiUrl = "https://kshera-server.onrender.com/restaurant";
 
 export const getRestaurants = async () => {
   try {
@@ -109,7 +109,7 @@ export const reserveRestaurant = async (userId, restaurantId) => {
     }
 
     const response = await axios.post(
-      `http://localhost:8181/users/${userId}/reserve`,  
+      `https://kshera-server.onrender.com/users/${userId}/reserve`,
       { restaurantId },
       {
         headers: {
@@ -135,7 +135,7 @@ export const changeLikeStatus = async (restaurantId, userId) => {
 
 
     const { data } = await axios.patch(
-      `http://localhost:8181/restaurant/${restaurantId}/like`,
+      `https://kshera-server.onrender.com/restaurant/${restaurantId}/like`,
       { userId }, // ✅ Send userId in request body
       {
         headers: { "x-auth-token": token },
@@ -164,7 +164,7 @@ export const cancelReservation = async (userId, restaurantId) => {
     }
 
     const response = await axios.delete(
-      `http://localhost:8181/users/${userId}/reservations/${restaurantId}`,  // ✅ Correct DELETE API call
+      `https://kshera-server.onrender.com/users/${userId}/reservations/${restaurantId}`,  // ✅ Correct DELETE API call
       {
         headers: {
           "x-auth-token": token, // ✅ Send authentication token
