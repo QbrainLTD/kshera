@@ -1,4 +1,4 @@
-
+Writer: idan Arbeli | 0504050514
 
 ## **כשרה - Kosher Restaurant Finder** 🥗🌍
 
