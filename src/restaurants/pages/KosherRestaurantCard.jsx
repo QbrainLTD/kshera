@@ -163,9 +163,10 @@ function KosherRestaurantCard({ restaurant }) {
                     <ActionButton variant="contained" color="primary" onClick={handleNavigateClick}>
                         ניווט
                     </ActionButton>
+                    {user && (
                     <ActionButton variant="contained" color="info" onClick={handleReservationClick}>
                         הזמנת שולחן
-                    </ActionButton>
+                        </ActionButton>)}
                     {user?._id === restaurant.user_id && (
                         <IconButton onClick={handleDeleteRestaurant} color="error">
                             <DeleteIcon />

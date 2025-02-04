@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import KosherRestaurantCard from "./KosherRestaurantCard";
-import { Box, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Box, Select, MenuItem, FormControl, InputLabel, Typography } from "@mui/material";
 import useRestaurant from "../hooks/useRestaurant";
 import CheckBoxRest from "../../layout/header/CheckBoxRest";
 import useCountries from "../hooks/useCountries";
@@ -57,13 +57,29 @@ export default function RestaurantsPage() {
           justifyContent: "center",
           alignItems: "center",
           gap: 2,
-          width: "100%",
-          maxWidth: "1200px",
+          width: "100vw",
+          maxWidth: "100%",
           margin: "0 auto",
-          padding: 2,
+          padding: 0,
+          
+          
         }}
       >
-        
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          textAlign="center"
+          color="#424242"
+          sx={{
+            mt: 2,
+            mb: 2,
+            fontSize: { xs: "1.0rem", sm: "2rem", md: "2.0rem" },
+            direction:"rtl"
+          }}
+        >
+         🌎 כשרה - מגלים עולם של טעמים כשרים 🍴
+        </Typography>
+
         <CheckBoxRest onFilterChange={handleFilterTags} />
 
         
@@ -92,10 +108,11 @@ export default function RestaurantsPage() {
           alignItems: "center",
           justifyContent: "center",
           gap: 2,
-          width: "100%",
-          maxWidth: "80%",
+          width: "100vw",
+          maxWidth: "80vw",
           margin: "0 auto",
           padding: 2,
+          
         }}
       >
         <Box

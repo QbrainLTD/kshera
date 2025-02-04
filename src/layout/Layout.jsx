@@ -7,13 +7,13 @@ import { Typography } from "@mui/material";
 export default function Layout() {
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+      <div style={{ display: "flex", flexDirection: "column",height: "95vh" }}>
         {/* Fixed Header */}
         <header
           style={{
             position: "fixed",
             top: 0,
-            width: "100%",
+            width: "100vw",
             zIndex: 1000,
           }}
         >
@@ -24,7 +24,7 @@ export default function Layout() {
         <main
           style={{
             flexGrow: 23,
-            marginTop: "15vh", 
+            marginTop: "10vh", 
             overflowY: "auto",
           }}
         >
