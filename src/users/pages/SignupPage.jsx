@@ -32,10 +32,11 @@ export default function SignupPage() {
   return (
     <Container
       sx={{
-        paddingTop: 1,
+        paddingTop: 0,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        height:"90vh"
       }}
     >
       <SignupForm
