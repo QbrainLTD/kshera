@@ -32,7 +32,7 @@ export default function SignupPage() {
   return (
     <Container
       sx={{
-        paddingTop: 8,
+        paddingTop: 1,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
