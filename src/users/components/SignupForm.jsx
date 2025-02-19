@@ -19,7 +19,13 @@ export default function SignupForm({
       onReset={onReset}
       validateForm={validateForm}
       title={title}
-      styles={{ maxWidth: "800px", height: "80vh" }}
+      styles={{
+        maxWidth: "800px",
+        height: "80vh",
+        padding: 0,
+        paddingBottom: "64px", 
+        overflowY: "auto"     
+      }}
     >
       <Input
         name="first"
