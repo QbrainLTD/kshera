@@ -19,7 +19,7 @@ export default function SignupForm({
       onReset={onReset}
       validateForm={validateForm}
       title={title}
-      styles={{ maxWidth: "800px" }}
+      styles={{ maxWidth: "800px", height: "80vh" }}
     >
       <Input
         name="first"
